@@ -1,0 +1,3 @@
+[submodule "nutriscan"]
+	path = nutriscan
+	url = https://github.com/LouisY06/nutriscan.git
