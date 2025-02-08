@@ -1,3 +1,7 @@
+'''
+Testing for Groq API
+'''
+
 import os
 
 from groq import Groq
@@ -10,10 +14,10 @@ chat_completion = client.chat.completions.create(
     messages=[
         {
             "role": "user",
-            "content": "Explain the importance of fast language models",
+            "content": "What are you",
         }
     ],
-    model="llama-3.3-70b-versatile",
+    model="deepseek-r1-distill-llama-70b",
 )
 
 print(chat_completion.choices[0].message.content)
