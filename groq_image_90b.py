@@ -98,11 +98,11 @@ def get_image_description(image_url: str, local: bool) -> str:
             stream=False,
             stop=None,
 
-            model="llama-3.2-11b-vision-preview",
+            model="llama-3.2-90b-vision-preview",
         )
     else:
         completion = client.chat.completions.create(
-            model="llama-3.2-11b-vision-preview",
+            model="llama-3.2-90b-vision-preview",
             messages=[
                 {
                     "role": "user",
@@ -143,8 +143,5 @@ if __name__ == "__main__":
     for path in image_paths:
         result_message = get_image_description(path, local=True)
         print(result_message.content)
-
-
-
 
 
