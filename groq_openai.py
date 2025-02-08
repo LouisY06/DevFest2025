@@ -10,9 +10,11 @@ chat_completion = client.chat.completions.create(
     messages=[
         {
             "role": "user",
-            "content": "Am I talking to ChatGPT or Groq?",
+            "content": "What LLM are you?",
         }
     ],
+    model="deepseek-r1-distill-llama-70b"
 )
 
 print(chat_completion.choices[0].message.content)
+
