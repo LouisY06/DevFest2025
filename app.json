@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "HelloWorld",
-    "slug": "expo-template-default",
+    "name": "NutriSwap",
+    "slug": "nutriswap",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -9,13 +9,15 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.lyu06org.nutriswap"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.lyu06org.nutriswap"
     },
     "web": {
       "bundler": "metro",
@@ -36,6 +38,18 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0a61cb42-505a-42cb-ae28-9a5dcf5eb3c7"
+      }
+    },
+    "owner": "lyu06-org",
+    "updates": {
+      "url": "https://u.expo.dev/0a61cb42-505a-42cb-ae28-9a5dcf5eb3c7"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }
