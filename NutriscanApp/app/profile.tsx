@@ -131,7 +131,8 @@ export default function Profile() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container}  contentContainerStyle={{ paddingBottom: 60 }}
+>
       {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
         <Ionicons name="arrow-back" size={24} color="#4A4A4A" />
@@ -228,7 +229,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    top: 20,
+    top: 30,
     left: 20,
     zIndex: 10,
   },
@@ -237,6 +238,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     color: '#4A4A4A',
+    marginTop: 30,
     marginBottom: 20,
   },
   statsCard: {
