@@ -121,7 +121,8 @@ async def get_meal_feedback(limit: int = 5):
         Suggest alternative foods that would be more nutritious but still enjoyable.
         ONLY GIVE FEEDBACK ON THE CURRENT MEAL. For this, do not consider the past meals / history.
 
-        The expected response is ONE DICTIONARY the this specific JSON format:
+        The expected response is ONE DICTIONARY in the following specific JSON format. 
+        To be clear, ONE name entry and ONE suggestion entry will be present in the response.
         {{
         "suggestions": [
             {{
