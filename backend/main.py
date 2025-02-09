@@ -12,12 +12,16 @@ import openai
 from groq import Groq
 import requests
 from dotenv import load_dotenv
+import backend.meal as meal
 
 app = FastAPI()
+
+app.include_router(meal.router, prefix="", tags=["meals"])
 load_dotenv()
 
 # Retrieve API keys from environment variables
 groq_api_key = os.getenv("GROQ_API_KEY")
+
 mongo_uri = os.getenv("MONGO_URI")
 print(mongo_uri)
 
@@ -30,7 +34,7 @@ except Exception as e:
     print(f"MongoDB Connection Error: {e}")
 
 db = mongo_client["nutriscan"]  
-collection = db["food_analysis"]  
+collection = db["food_analysis"]
 
 # Allow Expo app to communicate with backend
 app.add_middleware(
