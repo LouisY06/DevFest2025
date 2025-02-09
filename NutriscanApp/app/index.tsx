@@ -52,7 +52,7 @@ export default function FoodScanner() {
         } as any);
 
         try {
-            let response = await fetch("http://10.206.57.212:8080/analyze2", {
+            let response = await fetch("http://10.207.5.135:8080/analyze", {
                 method: "POST",
                 headers: { "Content-Type": "multipart/form-data" },
                 body: formData,
