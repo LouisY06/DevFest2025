@@ -2,7 +2,7 @@
 Devfest2025
 
 =======
-# Welcome to your Expo app 👋
+# Welcome to Nomzi: AI Food Health and Calorie Tracker! 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
