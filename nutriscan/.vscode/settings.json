@@ -3,5 +3,22 @@
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit",
     "source.sortMembers": "explicit"
+  },
+  "detectedConfig": {
+    "typescript": true,
+    "naming": "Pascal Case",
+    "unit": "em",
+    "framework": "react",
+    "styling": "'Inline Styles"
+  },
+  "locofyConfig": {
+    "project": "DevFest2025",
+    "id": "2smwt2u2xr9guK363SdSevu17ip",
+    "framework": "react-native",
+    "typescript": true,
+    "project_environment": "expo_go",
+    "path": "assets/",
+    "componentsPath": "/Users/louisyu/devfest2025/DevFest2025/nutriscan/components",
+    "screensPath": "/Users/louisyu/devfest2025/DevFest2025/nutriscan/app/screens"
   }
 }

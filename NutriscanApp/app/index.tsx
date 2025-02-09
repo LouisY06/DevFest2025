@@ -115,39 +115,78 @@ export default function FoodScanner() {
         if (!feedback) return <Text style={styles.placeholderText}>No feedback yet.</Text>;
     
         try {
+            // ✅ Directly parse the feedback as JSON
             const parsedFeedback = JSON.parse(feedback);
     
             return (
                 <View style={styles.responseContainer}>
                     <Text style={styles.sectionTitle}>📝 Health Feedback</Text>
-                    {parsedFeedback.suggestions?.map((suggestion: string, index: number) => (
-                        <Text key={index} style={styles.resultDetail}>✅ {suggestion}</Text>
+                    {parsedFeedback.suggestions?.map((item: any, index: number) => (
+                        <View key={index} style={styles.resultItem}>
+                            <Text style={styles.resultTitle}>🍽️ Food: {item.name}</Text>
+                            <Text style={styles.resultDetail}>🥗 Alternative: <Text style={styles.resultHighlight}>{item.suggestion || "None"}</Text></Text>
+                            <Text style={styles.resultDetail}>📊 Reason: <Text style={styles.resultHighlight}>{item.reason || "No reason provided"}</Text></Text>
+                        </View>
                     ))}
                 </View>
             );
         } catch (error) {
-            return <Text style={styles.responseText}>{feedback}</Text>;
+            console.error("Error parsing feedback:", error);
+            return <Text style={styles.responseText}>⚠️ Error processing feedback data.</Text>;
         }
     };
-
+    
     const renderHistoryResult = () => {
         if (!history || history.length === 0) return <Text style={styles.placeholderText}>No meal history available.</Text>;
     
         return (
             <View style={styles.responseContainer}>
                 <Text style={styles.sectionTitle}>📜 Meal History</Text>
-                {history.map((meal, index) => (
-                    <View key={index} style={styles.resultItem}>
-                        <Text style={styles.resultTitle}>📌 Your Meal</Text>
-                        <Text style={styles.resultDetail}>📊 Analysis: <Text style={styles.resultHighlight}>{meal.analysis}</Text></Text>
-                        {meal.image_base64 && (
-                            <Image source={{ uri: `data:image/jpeg;base64,${meal.image_base64}` }} style={styles.image} />
-                        )}
-                    </View>
-                ))}
+                {history.map((meal, index) => {
+                    let parsedMeal;
+    
+                    // ✅ Attempt to parse meal.analysis as JSON string
+                    try {
+                        parsedMeal = JSON.parse(meal.analysis);
+                    } catch (error) {
+                        console.error("Error parsing meal analysis:", error);
+                        return (
+                            <View key={index} style={styles.resultItem}>
+                                <Text style={styles.resultTitle}>📌 Your Meal</Text>
+                                <Text style={styles.resultDetail}>⚠️ Error parsing meal data.</Text>
+                            </View>
+                        );
+                    }
+    
+                    return (
+                        <View key={index} style={styles.resultItem}>
+                            <Text style={styles.resultTitle}>📌 Your Meal</Text>
+    
+                            {/* ✅ Display each food item properly */}
+                            {parsedMeal.main_food_items?.map((item: any, itemIndex: number) => (
+                                <View key={itemIndex} style={styles.foodItem}>
+                                    <Text style={styles.foodTitle}>🍛 {item.name}</Text>
+                                    <Text style={styles.foodDetail}>🥗 Alternative: <Text style={styles.foodHighlight}>{item.alternative || "None"}</Text></Text>
+                                    <Text style={styles.foodDetail}>🔥 Calories: <Text style={styles.foodHighlight}>{item.calories} kcal</Text></Text>
+                                </View>
+                            ))}
+    
+                            {/* ✅ Show total calories if available */}
+                            {parsedMeal.total_calories !== undefined && (
+                                <Text style={styles.totalCalories}>⚡ Total Calories: {parsedMeal.total_calories} kcal</Text>
+                            )}
+    
+                            {/* ✅ Show meal image if available */}
+                            {meal.image_base64 && (
+                                <Image source={{ uri: `data:image/jpeg;base64,${meal.image_base64}` }} style={styles.image} />
+                            )}
+                        </View>
+                    );
+                })}
             </View>
         );
     };
+    
     
     
 
@@ -176,25 +215,17 @@ export default function FoodScanner() {
 
             <ScrollView style={styles.responseBox} nestedScrollEnabled={true}>
                 {/* ✅ Formatted Food Analysis */}
-                <Text style={styles.sectionTitle}>🍽️ Food Analysis:</Text>
+                <Text style={styles.sectionTitle}></Text>
                 {renderAnalysisResult()} {/* Calls the formatted function */}
 
                 {/* ✅ Formatted Health Feedback */}
-                <Text style={styles.sectionTitle}>📝 Health Feedback:</Text>
-                <Text style={styles.responseText}>{feedback || "No feedback yet."}</Text>
+                <Text style={styles.sectionTitle}></Text>
+                {renderFeedbackResult()}
 
                 {/* ✅ Formatted Meal History */}
-                <Text style={styles.sectionTitle}>📜 Meal History:</Text>
+                <Text style={styles.sectionTitle}></Text>
                 {history.length > -1 ? (
-                    history.map((meal, index) => (
-                        <View key={index} style={styles.resultItem}>
-                            <Text style={styles.resultTitle}>📌 Your Meal</Text>
-                            <Text style={styles.resultDetail}>📊 Analysis: {meal.analysis}</Text>
-                            {meal.image_base64 && (
-                                <Image source={{ uri: `data:image/jpeg;base64,${meal.image_base64}` }} style={styles.image} />
-                            )}
-                        </View>
-                    ))
+                    renderHistoryResult()
                 ) : (
                     <Text style={styles.responseText}>No meal history available.</Text>
                 )}
@@ -307,5 +338,40 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: "#aaa",
         textAlign: "center",
+    },
+    foodItem: {
+        backgroundColor: "#E8F5E9", // Light green background for food items
+        padding: 12,
+        borderRadius: 10,
+        marginBottom: 10,
+        borderWidth: 1,
+        borderColor: "#C8E6C9", // Soft green border
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
+    },
+    foodTitle: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#2E7D32", // Dark green for the main food name
+        marginBottom: 5,
+    },
+    foodDetail: {
+        fontSize: 16,
+        color: "#555",
+        marginBottom: 3,
+    },
+    foodHighlight: {
+        fontWeight: "bold",
+        color: "#1B5E20", // Deep green to highlight alternatives
+    },
+    totalCalories: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#D84315", // Reddish-orange to emphasize total calorie count
+        textAlign: "center",
+        marginTop: 10,
     },
 });
