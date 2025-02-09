@@ -114,15 +114,30 @@ async def get_meal_feedback(limit: int = 5):
         meal_descriptions = "\n".join([f"- {meal['analysis']}" for meal in recent_meals])
 
         prompt_text = f"""
-        Here are recent meals analyzed by the user:
+        Here are recent meals consumed by the user:
         {meal_descriptions}
 
         Provide concise feedback on how the user can make healthier food choices.
         Suggest alternative foods that would be more nutritious but still enjoyable.
+        ONLY GIVE FEEDBACK ON THE CURRENT MEAL. For this, do not consider the past meals / history.
+
+        The expected response is ONE DICTIONARY the this specific JSON format:
+        {{
+        "suggestions": [
+            {{
+            "name": "food item name",          
+            "suggestion": "alternatives to the unhealthy food",  
+            "reason": "nutritional reasons for the suggestion"
+            }}
+        ],
+        }}
+
+        Do NOT output any text ouside the JSON, and ensure the JSON is **valid**  ONLY OUTPUT A JSON.
         """
 
         # ✅ Send to Groq LLM
         feedback = await analyze_text(prompt_text)
+        print(feedback)
 
         return {"feedback": feedback}
 
@@ -137,7 +152,7 @@ async def analyze_text(prompt_text):
     response = await loop.run_in_executor(
         None,
         lambda: client.chat.completions.create(
-            model="deepseek-r1-distill-llama-70b",
+            model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": [{"type": "text", "text": prompt_text}]}],
         ),
     )
@@ -240,4 +255,3 @@ def get_image_description(image_url: str, local: bool) -> str:
             stop=None,
         )
     return completion.choices[0].message
-

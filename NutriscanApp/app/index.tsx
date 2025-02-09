@@ -107,6 +107,45 @@ export default function FoodScanner() {
             return <Text style={styles.responseText}>{analysisResult}</Text>;
         }
     };
+
+    const renderFeedbackResult = () => {
+        if (!feedback) return <Text style={styles.placeholderText}>No feedback yet.</Text>;
+    
+        try {
+            const parsedFeedback = JSON.parse(feedback);
+    
+            return (
+                <View style={styles.responseContainer}>
+                    <Text style={styles.sectionTitle}>📝 Health Feedback</Text>
+                    {parsedFeedback.suggestions?.map((suggestion: string, index: number) => (
+                        <Text key={index} style={styles.resultDetail}>✅ {suggestion}</Text>
+                    ))}
+                </View>
+            );
+        } catch (error) {
+            return <Text style={styles.responseText}>{feedback}</Text>;
+        }
+    };
+
+    const renderHistoryResult = () => {
+        if (!history || history.length === 0) return <Text style={styles.placeholderText}>No meal history available.</Text>;
+    
+        return (
+            <View style={styles.responseContainer}>
+                <Text style={styles.sectionTitle}>📜 Meal History</Text>
+                {history.map((meal, index) => (
+                    <View key={index} style={styles.resultItem}>
+                        <Text style={styles.resultTitle}>📌 Your Meal</Text>
+                        <Text style={styles.resultDetail}>📊 Analysis: <Text style={styles.resultHighlight}>{meal.analysis}</Text></Text>
+                        {meal.image_base64 && (
+                            <Image source={{ uri: `data:image/jpeg;base64,${meal.image_base64}` }} style={styles.image} />
+                        )}
+                    </View>
+                ))}
+            </View>
+        );
+    };
+    
     
 
     return (
@@ -131,7 +170,7 @@ export default function FoodScanner() {
 
             {loading && <ActivityIndicator size="large" color="blue" style={styles.loadingIndicator} />}
 
-            <ScrollView style={styles.responseBox}>
+            <ScrollView style={styles.responseBox} nestedScrollEnabled={true}>
                 {/* ✅ Formatted Food Analysis */}
                 <Text style={styles.sectionTitle}>🍽️ Food Analysis:</Text>
                 {renderAnalysisResult()} {/* Calls the formatted function */}
@@ -145,7 +184,7 @@ export default function FoodScanner() {
                 {history.length > 0 ? (
                     history.map((meal, index) => (
                         <View key={index} style={styles.resultItem}>
-                            <Text style={styles.resultTitle}>📌 {meal.image_name}</Text>
+                            <Text style={styles.resultTitle}>📌 Your Meal</Text>
                             <Text style={styles.resultDetail}>📊 Analysis: {meal.analysis}</Text>
                             {meal.image_base64 && (
                                 <Image source={{ uri: `data:image/jpeg;base64,${meal.image_base64}` }} style={styles.image} />
