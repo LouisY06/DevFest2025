@@ -205,7 +205,7 @@ const handlePost = async () => {
   
       Alert.alert("Posted", "Your meal has been created!");
       // Navigate to home
-      router.push("/home");
+      router.push("/");
     } catch (error) {
       console.error("Post Error:", error);
       Alert.alert("Error", "Failed to create meal.");
