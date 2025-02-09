@@ -221,10 +221,8 @@ export default function FoodScanner() {
                 {/* ✅ Formatted Health Feedback */}
                 <Text style={styles.sectionTitle}></Text>
                 {renderFeedbackResult()}
-                {/* TODO: Use renderFeedbackResult() instead */}
 
                 {/* ✅ Formatted Meal History */}
-                {/* TODO: Use renderHistoryResult() instead */}
                 <Text style={styles.sectionTitle}></Text>
                 {history.length > -1 ? (
                     renderHistoryResult()
