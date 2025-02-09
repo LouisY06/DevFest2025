@@ -20,8 +20,7 @@ export default function Profile() {
       <View style={styles.statsCard}>
         <View style={styles.profileRow}>
           <Image
-            source={require('../assets/images/Mask group.png')}
-
+            source={require('../assets/images/happy3.png')} // Profile Picture (Happy Face)
             style={styles.avatar}
           />
           <View style={styles.userInfo}>
@@ -35,8 +34,8 @@ export default function Profile() {
         {/* Nutrition Icons */}
         <View style={styles.nutritionRow}>
           <Image source={require('../assets/images/water.png')} style={styles.icon} />
-          <Image source={require('../assets/images/fries.png')} style={styles.icon} />
-          <Image source={require('../assets/images/sushi.png')} style={styles.icon} />
+          <Image source={require('../assets/images/pineapple.png')} style={styles.icon} />
+          <Image source={require('../assets/images/meatnveg.png')} style={styles.icon} />
         </View>
       </View>
 
@@ -45,7 +44,7 @@ export default function Profile() {
 
       <View style={styles.achievementsCard}>
         <View style={styles.achievementRow}>
-          <Image source={require('../assets/images/muscle.png')} style={styles.achievementIcon} />
+          <Image source={require('../assets/images/burger.png')} style={styles.achievementIcon} />
           <Text style={styles.achievementText}>
             <Text style={styles.boldText}>You and Louis</Text> completed a week-long shared health streak together!{'\n'}
             <Text style={styles.dateText}>September 07, 2024</Text>
@@ -53,7 +52,7 @@ export default function Profile() {
         </View>
 
         <View style={styles.achievementRow}>
-          <Image source={require('../assets/images/muscle.png')} style={styles.achievementIcon} />
+          <Image source={require('../assets/images/fries.png')} style={styles.achievementIcon} />
           <Text style={styles.achievementText}>
             <Text style={styles.boldText}>You and David</Text> completed a year-long shared health streak together!{'\n'}
             <Text style={styles.dateText}>August, 2024</Text>
@@ -61,7 +60,7 @@ export default function Profile() {
         </View>
 
         <View style={styles.achievementRow}>
-          <Image source={require('../assets/images/diamond.png')} style={styles.achievementIcon} />
+          <Image source={require('../assets/images/sushi.png')} style={styles.achievementIcon} />
           <Text style={styles.achievementText}>
             <Text style={styles.boldText}>You</Text> completed your 10th badge!{'\n'}
             <Text style={styles.dateText}>August, 2024</Text>
@@ -180,3 +179,4 @@ const styles = StyleSheet.create({
     color: '#777',
   },
 });
+
