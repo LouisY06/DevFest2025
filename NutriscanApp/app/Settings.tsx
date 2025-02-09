@@ -1,12 +1,13 @@
 // Settings.tsx
 
+import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import React from 'react';
 import {
-  FlatList,
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 
@@ -15,35 +16,17 @@ type Allergy = {
   name: string;
 };
 
-// Sample existing allergies
-const allergies: Allergy[] = [
+// Sample current allergies (the ones already selected)
+const currentAllergies: Allergy[] = [
   { id: '1', name: 'Peanuts' },
   { id: '2', name: 'Shellfish' },
   { id: '3', name: 'Gluten' },
 ];
-
-// Sample common allergies to add
-const commonAllergies: Allergy[] = [
-  { id: '1', name: 'Peanuts' },
-  { id: '2', name: 'Shellfish' },
-  { id: '3', name: 'Gluten' },
-  { id: '4', name: 'Dairy' },
-  { id: '5', name: 'Soy' },
-  { id: '6', name: 'Eggs' },
-  { id: '7', name: 'Wheat' },
-  { id: '8', name: 'Fish' },
-];
-
-const renderCommonAllergy = ({ item }: { item: Allergy }) => (
-  <View style={styles.commonAllergyBox}>
-    <Text style={styles.commonAllergyText}>{item.name}</Text>
-  </View>
-);
 
 const Settings: React.FC = () => {
   return (
     <View style={styles.container}>
-      {/* Header with a back button and title */}
+      {/* Header */}
       <View style={styles.header}>
         <Link href="/home" style={styles.backButton}>
           <Text style={styles.backButtonText}>←</Text>
@@ -53,31 +36,26 @@ const Settings: React.FC = () => {
 
       <ScrollView contentContainerStyle={styles.content}>
         {/* Allergies Section */}
-        <View style={styles.allergiesSection}>
-          <Text style={styles.allergiesTitle}>Allergies</Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.allergiesContainer}
-          >
-            {allergies.map((allergy) => (
-              <View key={allergy.id} style={styles.allergyBox}>
-                <Text style={styles.allergyText}>{allergy.name}</Text>
-              </View>
-            ))}
-          </ScrollView>
+        <Text style={styles.sectionTitle}>My Allergies</Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.allergiesContainer}
+        >
+          {currentAllergies.map((allergy) => (
+            <View key={allergy.id} style={styles.currentAllergyBox}>
+              <Ionicons name="warning" size={32} color="#FFA500" />
+              <Text style={styles.allergyText}>{allergy.name}</Text>
+            </View>
+          ))}
+        </ScrollView>
 
-          <Text style={styles.addAllergyTitle}>Add More Allergies</Text>
-          <FlatList
-            data={commonAllergies}
-            keyExtractor={(item) => item.id}
-            renderItem={renderCommonAllergy}
-            numColumns={4}
-            contentContainerStyle={styles.commonAllergiesGrid}
-          />
-        </View>
+        {/* "Add More Allergies" - One big box */}
+        <TouchableOpacity style={styles.addAllergyBox}>
+          <Text style={styles.addAllergyText}>Add More Allergies</Text>
+        </TouchableOpacity>
 
-        {/* Placeholder Settings Options */}
+        {/* Other settings options */}
         <View style={styles.settingItem}>
           <Text style={styles.settingTitle}>Change Profile Picture</Text>
         </View>
@@ -130,50 +108,48 @@ const styles = StyleSheet.create({
   content: {
     padding: 20,
   },
-  // Allergies Section styles
-  allergiesSection: {
-    marginBottom: 20,
-  },
-  allergiesTitle: {
+  sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginVertical: 15,
+    color: '#222',
   },
+  // Allergies Section
   allergiesContainer: {
+    alignItems: 'center',
     paddingVertical: 10,
   },
-  allergyBox: {
+  currentAllergyBox: {
+    width: 140,
+    height: 140,
+    marginRight: 15,
     backgroundColor: '#e0e0e0',
     borderRadius: 10,
-    padding: 10,
-    marginRight: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   allergyText: {
+    marginTop: 5,
     fontSize: 16,
     color: '#333',
   },
-  addAllergyTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginTop: 20,
-    marginBottom: 10,
-  },
-  commonAllergiesGrid: {
-    paddingBottom: 20,
-  },
-  commonAllergyBox: {
-    flex: 1,
-    margin: 5,
-    backgroundColor: '#f2f2f2',
-    padding: 10,
-    borderRadius: 8,
+  // "Add More Allergies" box (one big box)
+  addAllergyBox: {
+    width: '95%',
+    height: 120,
+    marginVertical: 20,
+    backgroundColor: '#d0d0d0',
+    borderRadius: 10,
     alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
   },
-  commonAllergyText: {
-    fontSize: 14,
+  addAllergyText: {
+    fontSize: 18,
     color: '#555',
+    fontWeight: 'bold',
   },
-  // Settings options styles
+  // Settings options
   settingItem: {
     padding: 15,
     marginVertical: 10,
