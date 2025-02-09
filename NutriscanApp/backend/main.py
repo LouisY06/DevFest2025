@@ -252,19 +252,19 @@ def get_image_description(image_url: str, local: bool) -> str:
         )
     return completion.choices[0].message
 
-if __name__ == "__main__":
-    client = TestClient(app)
+# if __name__ == "__main__":
+    # client = TestClient(app)
 
-    # Path to the image file you want to test
-    image_path = "/Users/davidli/Devfest2025/images/Eggplant-Parmesan-7-scaled.jpg"
+    # # Path to the image file you want to test
+    # image_path = "/Users/davidli/Devfest2025/images/Eggplant-Parmesan-7-scaled.jpg"
     
-    # Open the file in binary mode and send it with a POST request
-    with open(image_path, "rb") as f:
-        response = client.post("/analyze2", files={"file": f})
+    # # Open the file in binary mode and send it with a POST request
+    # with open(image_path, "rb") as f:
+    #     response = client.post("/analyze2", files={"file": f})
     
-    # Print the JSON response from the endpoint
-    print("Response status code:", response.status_code)
-    print("Response JSON:", response.json())
+    # # Print the JSON response from the endpoint
+    # print("Response status code:", response.status_code)
+    # print("Response JSON:", response.json())
 
 
 
