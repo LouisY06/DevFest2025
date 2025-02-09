@@ -15,8 +15,6 @@ export default function FoodScanner() {
     const [image, setImage] = useState<string | null>(null);
     const [analysisResult, setAnalysisResult] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-    const [feedback, setFeedback] = useState<string | null>(null);
-    const [history, setHistory] = useState<any[]>([]);
 
     // ✅ Open Camera
     const takePhoto = async () => {
@@ -53,7 +51,7 @@ export default function FoodScanner() {
         } as any);
 
         try {
-            let response = await fetch("http://10.207.5.135:8080/analyze", {
+            let response = await fetch("http://10.207.5.135:8080/analyze2", {
                 method: "POST",
                 headers: { "Content-Type": "multipart/form-data" },
                 body: formData,
@@ -69,74 +67,41 @@ export default function FoodScanner() {
         setLoading(false);
     };
 
-    // ✅ Fetch Feedback from LLM
-    const getFeedback = async () => {
-        setLoading(true);
-        try {
-            let response = await fetch("http://10.207.5.135:8080/feedback");
-            let jsonResponse = await response.json();
-            console.log("Feedback Response:", jsonResponse);
-            setFeedback(jsonResponse.feedback);
-        } catch (error) {
-            console.error("API Error:", error);
-            Alert.alert("Error", "Failed to fetch feedback.");
-        }
-        setLoading(false);
-    };
+    // ✅ Parse & Display Analysis Result
+    const renderAnalysisResult = () => {
+        if (!analysisResult) return <Text style={styles.responseText}>No analysis available.</Text>;
 
-    // ✅ Fetch History from MongoDB
-    const getHistory = async () => {
-        setLoading(true);
         try {
-            let response = await fetch("http://10.207.5.135:8080/history");
-            let jsonResponse = await response.json();
-            console.log("History Response:", jsonResponse);
-            setHistory(jsonResponse.history);
+            const parsedResult = JSON.parse(analysisResult);
+            return (
+                <View style={styles.responseContainer}>
+                    <Text style={styles.sectionTitle}>Food Analysis:</Text>
+                    {parsedResult.main_food_items?.map((item: any, index: number) => (
+                        <View key={index} style={styles.resultItem}>
+                            <Text>Name: {item.name}</Text>
+                            <Text>Alternative: {item.alternative}</Text>
+                            <Text>Calories: {item.calories}</Text>
+                        </View>
+                    ))}
+                    {parsedResult.total_calories !== undefined && (
+                        <Text style={styles.sectionTitle}>Total Calories: {parsedResult.total_calories}</Text>
+                    )}
+                </View>
+            );
         } catch (error) {
-            console.error("API Error:", error);
-            Alert.alert("Error", "Failed to fetch history.");
+            return <Text style={styles.responseText}>{analysisResult}</Text>;
         }
-        setLoading(false);
     };
 
     return (
         <View style={styles.container}>
             <Button title="Take Photo" onPress={takePhoto} />
             {image && <Image source={{ uri: image }} style={styles.image} />}
-
             <Button title="Analyze Food" onPress={analyzeImage} disabled={loading} />
-            <Button title="Get Feedback" onPress={getFeedback} disabled={loading} />
-            <Button title="View History" onPress={getHistory} disabled={loading} />
-
+            
             {loading && <ActivityIndicator size="large" color="blue" />}
-
-            {/* ✅ Improved UI for Analysis Results */}
-            <ScrollView style={styles.responseBox}>
-                {analysisResult && (
-                    <>
-                        <Text style={styles.sectionTitle}>Food Analysis:</Text>
-                        <Text style={styles.responseText}>{analysisResult}</Text>
-                    </>
-                )}
-
-                {feedback && (
-                    <>
-                        <Text style={styles.sectionTitle}>Health Feedback:</Text>
-                        <Text style={styles.responseText}>{feedback}</Text>
-                    </>
-                )}
-
-                {history.length > 0 && (
-                    <>
-                        <Text style={styles.sectionTitle}>History:</Text>
-                        {history.map((item, index) => (
-                            <Text key={index} style={styles.responseText}>
-                                - {item.analysis}
-                            </Text>
-                        ))}
-                    </>
-                )}
-            </ScrollView>
+            
+            <ScrollView style={styles.responseBox}>{renderAnalysisResult()}</ScrollView>
         </View>
     );
 }
@@ -164,10 +129,19 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         maxHeight: 300,
     },
+    responseContainer: {
+        padding: 10,
+    },
     sectionTitle: {
         fontSize: 18,
         fontWeight: "bold",
         marginBottom: 5,
+    },
+    resultItem: {
+        marginBottom: 10,
+        backgroundColor: "#e0e0e0",
+        padding: 10,
+        borderRadius: 5,
     },
     responseText: {
         fontSize: 16,
@@ -175,3 +149,4 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
 });
+

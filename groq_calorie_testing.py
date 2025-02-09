@@ -36,19 +36,31 @@ import os
 #     stop=None,
 # )
 
-optimal_prompt = '''If the food appears oily, increase the calorie count. Alternative food item is significantly different from original food item, and consider vegetarian options. Analyze the provided image and respond ONLY with valid JSON in the following format, with no additional text or explanation. If the food item is fried chicken, give an explanation for the calorie count. Only respond in JSON Format:
+optimal_prompt = '''You will be analyzing a food image. The image could be a food packaging or a food dish. Please follow these rules strictly:
+
+1. If the alternative food item is significantly different from the original, and consider vegetarian options.
+2. ONLY respond with a valid **JSON** object in the format below. 
+3. Do NOT add any additional text, explanation, or commentary outside of the JSON response.
+4. If the food item is fried chicken, provide an explanation for the calorie count within the "explanation" field in the JSON.
+5. If the item is **packaged food** (e.g., a box or bag), provide the food name and calories as listed on the packaging.
+6. If the item is a **food dish** (e.g., a plate of food), provide the main ingredients and estimated calorie count based on common values for those ingredients.
+7. If there is no clear alternative food item, leave the "alternative" field as `null`.
+
+The expected response is in this specific JSON format:
 
 {
   "main_food_items": [
     {
-      "name": "food item name",
-      "alternative": "alternative food item",
-      "calories": calorie count
+      "name": "food item name",          # The name of the food item.
+      "alternative": "alternative food item",  # An alternative food item (optional, can be null).
+      "calories": calorie count           # Calorie count of the food item (must be an integer).
     }
   ],
-  "total_calories": total calorie count
+  "total_calories": total calorie count  # Sum of calories for the food items (integer).
 }
-'''
+
+Do NOT output any text or explanation, and ensure the JSON is **valid**  ONLY OUTPUT A JSON.'''
+
 
 
 # Function to encode the image
