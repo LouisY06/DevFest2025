@@ -1,13 +1,138 @@
+// Profile.tsx
+
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+    Image,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from 'react-native';
 
 export default function Profile() {
   const router = useRouter();
 
+  // Existing profile-related state can be here...
+  // New state for meal history and health feedback:
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const [history, setHistory] = useState<any[]>([]);
+  const [loadingFeedback, setLoadingFeedback] = useState(false);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+
+  // Fetch feedback and history when the component mounts:
+  useEffect(() => {
+    fetchFeedback();
+    fetchHistory();
+  }, []);
+
+  const fetchFeedback = async () => {
+    try {
+      setLoadingFeedback(true);
+      const response = await fetch("http://10.206.57.212:8080/feedback");
+      const jsonResponse = await response.json();
+      setFeedback(jsonResponse.feedback);
+    } catch (error) {
+      console.error("Error fetching feedback:", error);
+    } finally {
+      setLoadingFeedback(false);
+    }
+  };
+
+  const fetchHistory = async () => {
+    try {
+      setLoadingHistory(true);
+      const response = await fetch("http://10.206.57.212:8080/history");
+      const jsonResponse = await response.json();
+      setHistory(jsonResponse.history);
+    } catch (error) {
+      console.error("Error fetching history:", error);
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
+  // Render the health feedback (recommendations) section.
+  const renderFeedbackResult = () => {
+    if (!feedback) {
+      return <Text style={styles.placeholderText}>No feedback available.</Text>;
+    }
+    try {
+      const parsedFeedback = JSON.parse(feedback);
+      return (
+        <View style={styles.responseContainer}>
+          <Text style={styles.sectionTitle}>📝 Health Feedback</Text>
+          {parsedFeedback.suggestions?.map((item: any, index: number) => (
+            <View key={index} style={styles.resultItem}>
+              <Text style={styles.resultTitle}>Food: {item.name}</Text>
+              <Text style={styles.resultDetail}>
+                Alternative: <Text style={styles.resultHighlight}>{item.suggestion || "None"}</Text>
+              </Text>
+              <Text style={styles.resultDetail}>
+                Reason: <Text style={styles.resultHighlight}>{item.reason || "No reason provided"}</Text>
+              </Text>
+            </View>
+          ))}
+        </View>
+      );
+    } catch (error) {
+      console.error("Error parsing feedback:", error);
+      return <Text style={styles.responseText}>⚠️ Error processing feedback data.</Text>;
+    }
+  };
+
+  // Render the meal history section.
+  const renderHistoryResult = () => {
+    if (!history || history.length === 0) {
+      return <Text style={styles.placeholderText}>No meal history available.</Text>;
+    }
+    return (
+      <View style={styles.responseContainer}>
+        <Text style={styles.sectionTitle}>📜 Meal History</Text>
+        {history.map((meal, index) => {
+          let parsedMeal;
+          try {
+            parsedMeal = JSON.parse(meal.analysis);
+          } catch (error) {
+            console.error("Error parsing meal analysis:", error);
+            return (
+              <View key={index} style={styles.resultItem}>
+                <Text style={styles.resultTitle}>Meal</Text>
+                <Text style={styles.resultDetail}>Error parsing meal data.</Text>
+              </View>
+            );
+          }
+          return (
+            <View key={index} style={styles.resultItem}>
+              <Text style={styles.resultTitle}>Meal</Text>
+              {parsedMeal.main_food_items?.map((item: any, itemIndex: number) => (
+                <View key={itemIndex} style={styles.foodItem}>
+                  <Text style={styles.foodTitle}>🍛 {item.name}</Text>
+                  <Text style={styles.foodDetail}>
+                    Alternative: <Text style={styles.foodHighlight}>{item.alternative || "None"}</Text>
+                  </Text>
+                  <Text style={styles.foodDetail}>
+                    Calories: <Text style={styles.foodHighlight}>{item.calories} kcal</Text>
+                  </Text>
+                </View>
+              ))}
+              {parsedMeal.total_calories !== undefined && (
+                <Text style={styles.totalCalories}>
+                  Total Calories: {parsedMeal.total_calories} kcal
+                </Text>
+              )}
+            </View>
+          );
+        })}
+      </View>
+    );
+  };
+
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}  contentContainerStyle={{ paddingBottom: 60 }}
+>
       {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
         <Ionicons name="arrow-back" size={24} color="#4A4A4A" />
@@ -21,7 +146,6 @@ export default function Profile() {
         <View style={styles.profileRow}>
           <Image
             source={require('../assets/images/Mask group.png')}
-
             style={styles.avatar}
           />
           <View style={styles.userInfo}>
@@ -42,7 +166,6 @@ export default function Profile() {
 
       {/* New Achievements Section */}
       <Text style={styles.sectionTitle}>New Achievements</Text>
-
       <View style={styles.achievementsCard}>
         <View style={styles.achievementRow}>
           <Image source={require('../assets/images/muscle.png')} style={styles.achievementIcon} />
@@ -73,7 +196,27 @@ export default function Profile() {
       <TouchableOpacity style={styles.achievementsButton} onPress={() => router.push('/achievements')}>
         <Text style={styles.achievementsButtonText}>View All Achievements</Text>
       </TouchableOpacity>
-    </View>
+
+      {/* Meal History Section */}
+      <View style={styles.sectionContainer}>
+        <Text style={styles.sectionTitle}>Meal History</Text>
+        {loadingHistory ? (
+          <Text style={styles.placeholderText}>Loading...</Text>
+        ) : (
+          renderHistoryResult()
+        )}
+      </View>
+
+      {/* Health Feedback Section */}
+      <View style={styles.sectionContainer}>
+        <Text style={styles.sectionTitle}>Health Feedback</Text>
+        {loadingFeedback ? (
+          <Text style={styles.placeholderText}>Loading...</Text>
+        ) : (
+          renderFeedbackResult()
+        )}
+      </View>
+    </ScrollView>
   );
 }
 
@@ -86,7 +229,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    top: 20,
+    top: 30,
     left: 20,
     zIndex: 10,
   },
@@ -95,6 +238,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     color: '#4A4A4A',
+    marginTop: 30,
+    marginBottom: 20,
   },
   statsCard: {
     backgroundColor: '#FFF',
@@ -160,6 +305,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 5,
+    marginBottom: 20,
   },
   achievementRow: {
     flexDirection: 'row',
@@ -196,11 +342,81 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
+    marginBottom: 30,
   },
   achievementsButtonText: {
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  // New styles for the feedback and history sections:
+  sectionContainer: {
+    marginBottom: 30,
+  },
+  responseContainer: {
+    padding: 10,
+    backgroundColor: '#E8F5E9',
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  resultItem: {
+    backgroundColor: '#FFF',
+    padding: 10,
+    borderRadius: 10,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#C8E6C9',
+  },
+  resultTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2E7D32',
+  },
+  resultDetail: {
+    fontSize: 14,
+    color: '#555',
+  },
+  resultHighlight: {
+    fontWeight: 'bold',
+    color: '#1B5E20',
+  },
+  responseText: {
+    fontSize: 14,
+    color: '#333',
+    textAlign: 'center',
+  },
+  placeholderText: {
+    fontSize: 14,
+    color: '#aaa',
+    textAlign: 'center',
+  },
+  foodItem: {
+    backgroundColor: '#E8F5E9',
+    padding: 8,
+    borderRadius: 10,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#C8E6C9',
+  },
+  foodTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2E7D32',
+  },
+  foodDetail: {
+    fontSize: 14,
+    color: '#555',
+  },
+  foodHighlight: {
+    fontWeight: 'bold',
+    color: '#1B5E20',
+  },
+  totalCalories: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#D84315',
+    textAlign: 'center',
+    marginTop: 10,
   },
 });
 

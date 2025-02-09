@@ -1,27 +1,30 @@
+// app/home.tsx
+
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import "expo-router/entry";
 import React from "react";
 import {
-  StyleSheet,
-  Text,
-  View,
   Image,
   ScrollView,
+  StyleSheet,
+  Text,
   TouchableOpacity,
+  View,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router"; // Import Expo Router
 
 export default function Home() {
-  const router = useRouter(); // Initialize router
+  const router = useRouter();
 
-  // Mock feed data
+  // Mock feed data (replace with your real feed or backend data if needed)
   const feedData = [
     {
       id: 1,
       username: "Louis",
       time: "1h ago",
       text: "Yummy!",
-      avatar: require("../assets/images/happy1.png"), // Profile Avatar
-      image: require("../assets/images/food1.png"), // Food Image
+      avatar: require("../assets/images/happy1.png"),
+      image: require("../assets/images/food1.png"),
     },
     {
       id: 2,
@@ -43,13 +46,16 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      {/* 📢 Weekly Challenge Banner - Now Navigates to Challenge Page */}
-      <TouchableOpacity style={styles.challengeBanner} onPress={() => router.push("/challenge")}>
+      {/* Weekly Challenge Banner */}
+      <TouchableOpacity
+        style={styles.challengeBanner}
+        onPress={() => router.push("/challenge")}
+      >
         <Text style={styles.challengeText}>The Challenge of the week is here</Text>
         <Ionicons name="chevron-forward" size={20} color="white" />
       </TouchableOpacity>
 
-      {/* 📝 Feed */}
+      {/* The Feed */}
       <ScrollView style={styles.feed}>
         {feedData.map((post) => (
           <View key={post.id} style={styles.postCard}>
@@ -132,4 +138,3 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 });
-

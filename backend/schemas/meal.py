@@ -1,27 +1,46 @@
-from pydantic import BaseModel, Field
-from typing import List
+from pydantic import BaseModel, Field 
+from typing import List, Optional
 from datetime import date
 
 # Schema for a single dish
 class Dish(BaseModel):
-    name: str
-    calories: int
+    name: Optional[str] = "None"
+    calories: Optional[int] = 0
 
-# Base schema for meal data
+    class Config:
+        arbitrary_types_allowed = True  # Allow types that pydantic doesn't automatically generate schemas for
+        extra = "allow"                 # Allow extra fields
+
+# Base schema for meal data (including user info)
 class MealBase(BaseModel):
-    date: date
-    dishes: List[Dish]
-    total_calories: int
-    image_url: str
+    comment: str
+    date: str
+    # It’s best to use an actual date object for a default if the field is a date.
+    dishes: List[Dish] = Field(default_factory=list)
+    image_url: Optional[str] = None
+    total_calories: Optional[int] = None
+
+    user_icon_link: Optional[str] = None
+
+    # Additional user-related fields
+    user_id: Optional[str] = None
+    username: Optional[str] = None
+
+    class Config:
+        arbitrary_types_allowed = True
+        extra = "allow"
 
 # Schema used for meal creation (input)
 class MealCreate(MealBase):
-    pass
+    class Config:
+        arbitrary_types_allowed = True
+        extra = "allow"
 
-# Schema for meal stored/retrieved from the database
+# Schema for a meal as stored/retrieved from the database
 class Meal(MealBase):
-    id: str = Field(..., example="605c72ef3f1b2c3a8e4d5f67")  # Use a string for the ID
-    user_id: str
+    id: Optional[str] = None
 
     class Config:
-        from_attributes = True
+        arbitrary_types_allowed = True
+        extra = "allow"
+        from_attributes = True  # Ensures ORM compatibility
