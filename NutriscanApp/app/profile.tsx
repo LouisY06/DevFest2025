@@ -1,7 +1,7 @@
-import React from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import React from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function Profile() {
   const router = useRouter();
@@ -20,7 +20,8 @@ export default function Profile() {
       <View style={styles.statsCard}>
         <View style={styles.profileRow}>
           <Image
-            source={{ uri: 'https://randomuser.me/api/portraits/men/75.jpg' }}
+            source={require('../assets/images/Mask group.png')}
+
             style={styles.avatar}
           />
           <View style={styles.userInfo}>
@@ -33,9 +34,9 @@ export default function Profile() {
 
         {/* Nutrition Icons */}
         <View style={styles.nutritionRow}>
-          <Image source={require('../assets/water.png')} style={styles.icon} />
-          <Image source={require('../assets/chili.png')} style={styles.icon} />
-          <Image source={require('../assets/lettuce.png')} style={styles.icon} />
+          <Image source={require('../assets/images/water.png')} style={styles.icon} />
+          <Image source={require('../assets/images/fries.png')} style={styles.icon} />
+          <Image source={require('../assets/images/sushi.png')} style={styles.icon} />
         </View>
       </View>
 
@@ -44,7 +45,7 @@ export default function Profile() {
 
       <View style={styles.achievementsCard}>
         <View style={styles.achievementRow}>
-          <Image source={require('../assets/handshake.png')} style={styles.achievementIcon} />
+          <Image source={require('../assets/images/muscle.png')} style={styles.achievementIcon} />
           <Text style={styles.achievementText}>
             <Text style={styles.boldText}>You and Louis</Text> completed a week-long shared health streak together!{'\n'}
             <Text style={styles.dateText}>September 07, 2024</Text>
@@ -52,7 +53,7 @@ export default function Profile() {
         </View>
 
         <View style={styles.achievementRow}>
-          <Image source={require('../assets/handshake.png')} style={styles.achievementIcon} />
+          <Image source={require('../assets/images/muscle.png')} style={styles.achievementIcon} />
           <Text style={styles.achievementText}>
             <Text style={styles.boldText}>You and David</Text> completed a year-long shared health streak together!{'\n'}
             <Text style={styles.dateText}>August, 2024</Text>
@@ -60,7 +61,7 @@ export default function Profile() {
         </View>
 
         <View style={styles.achievementRow}>
-          <Image source={require('../assets/medal.png')} style={styles.achievementIcon} />
+          <Image source={require('../assets/images/diamond.png')} style={styles.achievementIcon} />
           <Text style={styles.achievementText}>
             <Text style={styles.boldText}>You</Text> completed your 10th badge!{'\n'}
             <Text style={styles.dateText}>August, 2024</Text>

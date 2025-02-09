@@ -1,0 +1,95 @@
+// AchievementsPage.tsx
+
+import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
+import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
+
+type Achievement = {
+  id: string;
+  icon: any; // Use a more specific type if available (e.g., ImageSourcePropType)
+};
+
+// Sample achievements array (update with your actual images)
+const achievements: Achievement[] = [
+  { id: '1', icon: require('../assets/images/happy1.png') },
+  { id: '2', icon: require('../assets/images/happy1.png') },
+  { id: '3', icon: require('../assets/images/happy1.png') },
+  { id: '4', icon: require('../assets/images/happy1.png') },
+  { id: '5', icon: require('../assets/images/happy1.png') },
+  { id: '6', icon: require('../assets/images/happy1.png') },
+  { id: '7', icon: require('../assets/images/happy1.png') },
+  { id: '8', icon: require('../assets/images/happy1.png') },
+  // Add more items as needed
+];
+
+const AchievementsPage: React.FC = () => {
+  const renderAchievement = ({ item }: { item: Achievement }) => (
+    <View style={styles.iconContainer}>
+      <Image source={item.icon} style={styles.icon} />
+    </View>
+  );
+
+  return (
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Ionicons
+          name="trophy"
+          size={28}
+          color="#4A4A4A"
+          style={styles.headerIcon}
+        />
+        <Text style={styles.headerTitle}>My Achievements</Text>
+      </View>
+
+      {/* Scrollable Grid */}
+      <FlatList
+        data={achievements}
+        keyExtractor={(item) => item.id}
+        renderItem={renderAchievement}
+        numColumns={4}
+        contentContainerStyle={styles.grid}
+      />
+    </View>
+  );
+};
+
+export default AchievementsPage;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    padding: 20,
+    paddingTop: 80, // More upper padding
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 30, // More space between header and grid
+  },
+  headerIcon: {
+    marginRight: 10,
+  },
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#4A4A4A',
+  },
+  grid: {
+    paddingBottom: 20,
+    marginTop: 20, // Extra margin at the top of the grid
+  },
+  iconContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 15, // Increased vertical margin for more space between rows
+    marginHorizontal: 5,
+  },
+  icon: {
+    width: 60,
+    height: 60,
+    resizeMode: 'contain',
+  },
+});
