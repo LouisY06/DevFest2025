@@ -57,8 +57,10 @@ export default function Streaks() {
         </View>
       </View>
 
-      {/* Friends List */}
-      <Text style={styles.subHeader}>Your Friends</Text>
+      {/* 🔗 "Your Friends" Button to Friend List */}
+      <TouchableOpacity onPress={() => router.push("/friendlist")}>
+        <Text style={styles.friendsButton}>Your Friends</Text>
+      </TouchableOpacity>
 
       <View style={styles.friendList}>
         {[
@@ -150,11 +152,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#777",
   },
-  subHeader: {
+  friendsButton: {
     fontSize: 18,
     fontWeight: "bold",
     marginVertical: 10,
-    color: "#222",
+    color: "#4A4A4A", // ⚫ Neutral color, not blue
+    textAlign: "center",
+    textDecorationLine: "underline", // Keeps it visually clickable
   },
   friendList: {
     marginTop: 10,
@@ -198,4 +202,3 @@ const styles = StyleSheet.create({
     color: "#777",
   },
 });
-

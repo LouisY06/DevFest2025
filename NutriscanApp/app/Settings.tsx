@@ -1,15 +1,15 @@
 // Settings.tsx
 
-import { Ionicons } from '@expo/vector-icons';
-import { Link } from 'expo-router';
-import React from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React from "react";
 import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 type Allergy = {
   id: string;
@@ -18,19 +18,22 @@ type Allergy = {
 
 // Sample current allergies (the ones already selected)
 const currentAllergies: Allergy[] = [
-  { id: '1', name: 'Peanuts' },
-  { id: '2', name: 'Shellfish' },
-  { id: '3', name: 'Gluten' },
+  { id: "1", name: "Peanuts" },
+  { id: "2", name: "Shellfish" },
+  { id: "3", name: "Gluten" },
 ];
 
 const Settings: React.FC = () => {
+  const router = useRouter(); // ✅ Initialize router
+
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Link href="/" style={styles.backButton}>
+        {/* ✅ Fixed Back Button - Now Navigates to the Previous Screen */}
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Text style={styles.backButtonText}>←</Text>
-        </Link>
+        </TouchableOpacity>
         <Text style={styles.headerTitle}>Settings</Text>
       </View>
 
@@ -81,28 +84,28 @@ export default Settings;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   header: {
     height: 60,
     paddingHorizontal: 10,
-    justifyContent: 'center',
-    position: 'relative',
+    justifyContent: "center",
+    position: "relative",
   },
   backButton: {
-    position: 'absolute',
+    position: "absolute",
     left: 10,
     top: 15,
     padding: 5,
   },
   backButtonText: {
     fontSize: 24,
-    color: '#007AFF',
+    color: "#007AFF",
   },
   headerTitle: {
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     lineHeight: 60,
   },
   content: {
@@ -110,50 +113,50 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginVertical: 15,
-    color: '#222',
+    color: "#222",
   },
   // Allergies Section
   allergiesContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 10,
   },
   currentAllergyBox: {
     width: 140,
     height: 140,
     marginRight: 15,
-    backgroundColor: '#e0e0e0',
+    backgroundColor: "#e0e0e0",
     borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   allergyText: {
     marginTop: 5,
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
   // "Add More Allergies" box (one big box)
   addAllergyBox: {
-    width: '95%',
+    width: "95%",
     height: 120,
     marginVertical: 20,
-    backgroundColor: '#d0d0d0',
+    backgroundColor: "#d0d0d0",
     borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
   },
   addAllergyText: {
     fontSize: 18,
-    color: '#555',
-    fontWeight: 'bold',
+    color: "#555",
+    fontWeight: "bold",
   },
   // Settings options
   settingItem: {
     padding: 15,
     marginVertical: 10,
-    backgroundColor: '#f2f2f2',
+    backgroundColor: "#f2f2f2",
     borderRadius: 10,
   },
   settingTitle: {

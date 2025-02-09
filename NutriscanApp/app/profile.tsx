@@ -53,7 +53,7 @@ export default function Profile() {
         </View>
 
         <View style={styles.achievementRow}>
-          <Image source={require('../assets/images/muscle.png')} style={styles.achievementIcon} />
+          <Image source={require('../assets/images/trophy.png')} style={styles.achievementIcon} />
           <Text style={styles.achievementText}>
             <Text style={styles.boldText}>You and David</Text> completed a year-long shared health streak together!{'\n'}
             <Text style={styles.dateText}>August, 2024</Text>
