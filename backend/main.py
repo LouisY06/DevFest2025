@@ -93,38 +93,41 @@ async def analyze_calories(file: UploadFile = File(...)):
     document = {
         "timestamp": datetime.now(timezone.utc),
         "image_name": file.filename,
+        "image_base64": base64_image,  # Store the image data
         "analysis": response.choices[0].message.content,
     }
     collection.insert_one(document)
-    
+
     return {"response": response.choices[0].message.content}
+
 
 
 # Endpoint to Retrieve Past Analyses
 @app.get("/history")
-async def get_analysis_history():
-    history = list(collection.find({}, {"_id": 0}))  
+async def get_analysis_history(limit: int = 5):
+    history = list(collection.find({}, {"_id": 0}).sort("timestamp", -1).limit(limit))
     return {"history": history}
+
 
 # Get Health Feedback from LLM
 @app.get("/feedback")
 async def get_meal_feedback(limit: int = 5):
     try:
-        # ✅ Retrieve the most recent meals
+        # ✅ Retrieve up to 5 past meals
         recent_meals = list(collection.find({}, {"_id": 0}).sort("timestamp", -1).limit(limit))
 
-        # ✅ Format meals for LLM prompt
+        # ✅ Format meal data for LLM prompt
         meal_descriptions = "\n".join([f"- {meal['analysis']}" for meal in recent_meals])
 
         prompt_text = f"""
         Here are recent meals analyzed by the user:
         {meal_descriptions}
 
-        Analyze the health of these most recent meals and give feedback to the user about possible nutritional improvements for future meals.
-        Provide concise, actionable suggestions for improving nutrition in bullet points.
+        Provide concise feedback on how the user can make healthier food choices.
+        Suggest alternative foods that would be more nutritious but still enjoyable.
         """
 
-        # Send meals to Groq's LLM
+        # ✅ Send to Groq LLM
         feedback = await analyze_text(prompt_text)
 
         return {"feedback": feedback}
@@ -243,47 +246,4 @@ def get_image_description(image_url: str, local: bool) -> str:
             stop=None,
         )
     return completion.choices[0].message
-
-# if __name__ == "__main__":
-    # client = TestClient(app)
-
-    # # Path to the image file you want to test
-    # image_path = "/Users/davidli/Devfest2025/images/Eggplant-Parmesan-7-scaled.jpg"
-    
-    # # Open the file in binary mode and send it with a POST request
-    # with open(image_path, "rb") as f:
-    #     response = client.post("/analyze2", files={"file": f})
-    
-    # # Print the JSON response from the endpoint
-    # print("Response status code:", response.status_code)
-    # print("Response JSON:", response.json())
-
-
-
-
-    ### REPLACE WITH TEST IMAGE ####
-
-
-    # test_url = "/Users/davidli/DevFest2025/images/Eggplant-Parmesan-7-scaled.jpg"
-
-    # result_message = get_image_description(test_url, local=True)
-
-    # print(result_message.content)
-
-    # print("Running test cases")
-
-    # folder_path = "/Users/davidli/DevFest2025/test_images"
-    # file_names = os.listdir(folder_path)
-    # image_paths = [
-    #     os.path.abspath(os.path.join(folder_path, f))
-    #     for f in file_names
-    #     if os.path.isfile(os.path.join(folder_path, f))  # only include files
-    # ]
-    # for path in image_paths:
-    #     result_message = get_image_description(path, local=True)
-    #     print(result_message.content)
-
-
-
-
 
