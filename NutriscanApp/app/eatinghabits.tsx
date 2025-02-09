@@ -7,33 +7,10 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
-  FlatList,
 } from "react-native";
 
-type EatingHabit = {
-  id: string;
-  name: string;
-  description: string;
-  icon: any;
-};
-
-export default function EatingHabits() {
+export default function AddEatingHabit() {
   const router = useRouter();
-
-  // Sample eating habits data
-  const [eatingHabits, setEatingHabits] = useState<EatingHabit[]>([
-    {
-      id: "1",
-      name: "Omnivore",
-      description: "Everything goes!",
-      icon: require("../assets/images/meatnveg.png"),
-    },
-  ]);
-
-  // Function to remove an eating habit
-  const removeEatingHabit = (id: string) => {
-    setEatingHabits(eatingHabits.filter((habit) => habit.id !== id));
-  };
 
   return (
     <View style={styles.container}>
@@ -44,28 +21,22 @@ export default function EatingHabits() {
 
       <Text style={styles.header}>Eating Habits</Text>
 
-      {/* List of Eating Habits */}
-      <FlatList
-        data={eatingHabits}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.habitCard}>
-            <View style={styles.habitInfo}>
-              <Image source={item.icon} style={styles.habitIcon} />
-              <View>
-                <Text style={styles.habitName}>{item.name}</Text>
-                <Text style={styles.habitDescription}>{item.description}</Text>
-              </View>
-            </View>
-            <TouchableOpacity onPress={() => removeEatingHabit(item.id)}>
-              <Ionicons name="remove-circle-outline" size={24} color="black" />
-            </TouchableOpacity>
+      {/* Example Added Habit Card (Placeholder) */}
+      <View style={styles.habitCard}>
+        <View style={styles.habitInfo}>
+          <Image source={require("../assets/images/meatnveg.png")} style={styles.habitIcon} />
+          <View>
+            <Text style={styles.habitName}>Omnivore</Text>
+            <Text style={styles.habitDescription}>Everything goes!</Text>
           </View>
-        )}
-      />
+        </View>
+        <TouchableOpacity>
+          <Ionicons name="remove-circle-outline" size={24} color="black" />
+        </TouchableOpacity>
+      </View>
 
       {/* Add Eating Habit Button */}
-      <TouchableOpacity style={styles.addHabitCard}>
+      <TouchableOpacity style={styles.addHabitCard} onPress={() => console.log("Adding Habit")}>
         <Ionicons name="add" size={32} color="#4A4A4A" />
         <Text style={styles.addHabitText}>Add Eating Habit</Text>
       </TouchableOpacity>
@@ -129,7 +100,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
-    marginTop: 20,
+    marginTop: 10,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 5,

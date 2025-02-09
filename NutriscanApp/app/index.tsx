@@ -1,5 +1,3 @@
-// app/home.tsx
-
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import "expo-router/entry";
@@ -79,13 +77,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F5F7FA",
+    paddingTop: 50, // ✅ Moves entire screen content down slightly
   },
   challengeBanner: {
     flexDirection: "row",
     backgroundColor: "#4A9780",
     borderRadius: 20,
     padding: 15,
-    margin: 15,
+    marginHorizontal: 15,
+    marginTop: 70, // ✅ Moves banner further down to avoid notch overlap
     alignItems: "center",
     justifyContent: "space-between",
   },
@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
   feed: {
     flex: 1,
     paddingHorizontal: 15,
+    marginTop: 10, // ✅ Adds extra spacing below challenge banner
   },
   postCard: {
     backgroundColor: "white",

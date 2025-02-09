@@ -62,13 +62,16 @@ export default function Allergies() {
             </TouchableOpacity>
           </View>
         )}
+        ListFooterComponent={
+          <View style={styles.addAllergyContainer}>
+            {/* Add Allergy Button */}
+            <TouchableOpacity style={styles.addAllergyCard}>
+              <Ionicons name="add" size={32} color="#4A4A4A" />
+              <Text style={styles.addAllergyText}>Add Allergy</Text>
+            </TouchableOpacity>
+          </View>
+        }
       />
-
-      {/* Add Allergy Button */}
-      <TouchableOpacity style={styles.addAllergyCard}>
-        <Ionicons name="add" size={32} color="#4A4A4A" />
-        <Text style={styles.addAllergyText}>Add Allergy</Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -122,6 +125,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#777",
   },
+  addAllergyContainer: {
+    marginTop: 10, // Ensures spacing from last allergy card
+  },
   addAllergyCard: {
     backgroundColor: "#FFF",
     borderRadius: 20,
@@ -129,7 +135,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
-    marginTop: 20,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 5,

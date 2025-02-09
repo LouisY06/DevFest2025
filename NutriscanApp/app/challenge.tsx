@@ -20,7 +20,7 @@ export default function Challenge() {
       </View>
 
       {/* Challenge Title */}
-      <Text style={styles.challengeTitle}>Challenge of the week</Text>
+      <Text style={styles.challengeTitle}>Challenge of the Week</Text>
       <Text style={styles.subText}>Find a friend to go on a weekly streak!</Text>
 
       {/* Challenge Cards */}
@@ -40,6 +40,14 @@ export default function Challenge() {
             <Text style={styles.nudgeText}>Nudge</Text>
           </TouchableOpacity>
         </View>
+      </View>
+
+      {/* New White Block Below */}
+      <View style={styles.addChallengeContainer}>
+        <TouchableOpacity style={styles.addChallengeCard}>
+          <Ionicons name="add" size={32} color="#4A4A4A" />
+          <Text style={styles.addChallengeText}>Add Challenge</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Footer */}
@@ -134,6 +142,26 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
   },
+  addChallengeContainer: {
+    marginTop: 20, // Ensures proper spacing below the cards
+  },
+  addChallengeCard: {
+    backgroundColor: "white",
+    borderRadius: 15,
+    padding: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  addChallengeText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginLeft: 10,
+  },
   footerText: {
     fontSize: 12,
     color: "#888",
@@ -141,3 +169,4 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 });
+

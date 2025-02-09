@@ -1,5 +1,3 @@
-// Layout.tsx
-
 import * as vectorIcons from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { Slot, useRouter } from "expo-router";
@@ -100,7 +98,7 @@ const styles = StyleSheet.create({
   },
   cameraButton: {
     position: "absolute",
-    bottom: 20,
+    bottom: 35, // ✅ Moves the button up slightly
     left: "50%",
     marginLeft: -35,
     backgroundColor: "#4A9780",
