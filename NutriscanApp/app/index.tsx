@@ -158,8 +158,6 @@ export default function FoodScanner() {
             </ScrollView>
 
         </View>
-
-        
     );
 }
 
