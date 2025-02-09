@@ -30,12 +30,12 @@ db = MongoClient(mongo_uri, server_api=ServerApi('1'))
 
 load_dotenv()
 food_analysis = db["nutriscan"]["food_analysis"]
-for i in food_analysis.find():
-    print(i)
+#for i in food_analysis.find():
+    #print(i)
 # Retrieve API keys from environment variables
 groq_api_key = os.getenv("GROQ_API_KEY")
 mongo_uri = os.getenv("MONGO_URI")
-print(mongo_uri)
+#print(mongo_uri)
 
 # Connect to MongoDB
 mongo_client = MongoClient(mongo_uri, server_api=ServerApi('1'))
@@ -162,7 +162,7 @@ async def get_meal_feedback(limit: int = 5):
 
         # ✅ Send to Groq LLM
         feedback = await analyze_text(prompt_text)
-        print(feedback)
+        #print(feedback)
 
         return {"feedback": feedback}
 
