@@ -1,4 +1,5 @@
 import * as ImagePicker from "expo-image-picker";
+import { useRouter } from 'expo-router';
 import React, { useState } from "react";
 import {
     ActivityIndicator,
@@ -7,11 +8,13 @@ import {
     ScrollView,
     StyleSheet,
     Text,
-    View,
-    TouchableOpacity
+    TouchableOpacity,
+    View
 } from "react-native";
 
+
 export default function FoodScanner() {
+    const router = useRouter();
     const [image, setImage] = useState<string | null>(null);
     const [analysisResult, setAnalysisResult] = useState<string | null>(null);
     const [feedback, setFeedback] = useState<string | null>(null);
@@ -53,7 +56,7 @@ export default function FoodScanner() {
         } as any);
 
         try {
-            let response = await fetch("http://10.207.5.135:8080/analyze", {
+            let response = await fetch("http://10.206.57.212:8080/analyze", {
                 method: "POST",
                 headers: { "Content-Type": "multipart/form-data" },
                 body: formData,
@@ -70,14 +73,14 @@ export default function FoodScanner() {
 
     // Fetch Feedback from Backend
     const fetchFeedback = async () => {
-        let response = await fetch("http://10.207.5.135:8080/feedback");
+        let response = await fetch("http://10.206.57.212:8080/feedback");
         let jsonResponse = await response.json();
         setFeedback(jsonResponse.feedback);
     };
 
     // Fetch History from Backend
     const fetchHistory = async () => {
-        let response = await fetch("http://10.207.5.135:8080/history");
+        let response = await fetch("http://10.206.57.212:8080/history");
         let jsonResponse = await response.json();
         setHistory(jsonResponse.history);
     };
@@ -168,6 +171,7 @@ export default function FoodScanner() {
                 <Text style={styles.buttonText}>📜 View History</Text>
             </TouchableOpacity>
 
+
             {loading && <ActivityIndicator size="large" color="blue" style={styles.loadingIndicator} />}
 
             <ScrollView style={styles.responseBox} nestedScrollEnabled={true}>
@@ -183,7 +187,7 @@ export default function FoodScanner() {
                 {/* ✅ Formatted Meal History */}
                 {/* TODO: Use renderHistoryResult() instead */}
                 <Text style={styles.sectionTitle}>📜 Meal History:</Text>
-                {history.length > 0 ? (
+                {history.length > -1 ? (
                     history.map((meal, index) => (
                         <View key={index} style={styles.resultItem}>
                             <Text style={styles.resultTitle}>📌 Your Meal</Text>

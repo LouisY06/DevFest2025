@@ -20,3 +20,4 @@ database = mongo_client.nutriscan
 # Get a collection (for example, the "meals" collection)
 meal_collection = database.get_collection("meals")
 user_collection = database.get_collection("users")
+food_analysis = database.get_collection("food_analysis")
