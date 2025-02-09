@@ -28,7 +28,7 @@ const Settings: React.FC = () => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Link href="/home" style={styles.backButton}>
+        <Link href="/" style={styles.backButton}>
           <Text style={styles.backButtonText}>←</Text>
         </Link>
         <Text style={styles.headerTitle}>Settings</Text>

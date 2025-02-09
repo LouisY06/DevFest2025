@@ -1,25 +1,32 @@
 // AchievementsPage.tsx
 
-import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 
 type Achievement = {
   id: string;
-  icon: any; // Use a more specific type if available (e.g., ImageSourcePropType)
+  icon: any; // ImageSourcePropType can be used instead
 };
 
-// Sample achievements array (update with your actual images)
+// Sample achievements array (updated with all available images)
 const achievements: Achievement[] = [
-  { id: '1', icon: require('../assets/images/happy1.png') },
-  { id: '2', icon: require('../assets/images/happy1.png') },
-  { id: '3', icon: require('../assets/images/happy1.png') },
-  { id: '4', icon: require('../assets/images/happy1.png') },
-  { id: '5', icon: require('../assets/images/happy1.png') },
-  { id: '6', icon: require('../assets/images/happy1.png') },
-  { id: '7', icon: require('../assets/images/happy1.png') },
-  { id: '8', icon: require('../assets/images/happy1.png') },
-  // Add more items as needed
+  { id: "1", icon: require("../assets/images/lettuce.png") },
+  { id: "2", icon: require("../assets/images/donut.png") },
+  { id: "3", icon: require("../assets/images/lettuce.png") },
+  { id: "4", icon: require("../assets/images/berries.png") },
+  { id: "5", icon: require("../assets/images/burger.png") },
+  { id: "6", icon: require("../assets/images/water.png") },
+  { id: "7", icon: require("../assets/images/chili.png") },
+  { id: "8", icon: require("../assets/images/chicken.png") },
+  { id: "9", icon: require("../assets/images/sushi.png") },
+  { id: "10", icon: require("../assets/images/scale.png") },
+  { id: "11", icon: require("../assets/images/soda.png") },
+  { id: "12", icon: require("../assets/images/fries.png") },
+  { id: "13", icon: require("../assets/images/diamond.png") },
+  { id: "14", icon: require("../assets/images/trophy.png") },
+  { id: "15", icon: require("../assets/images/pineapple.png") },
+  { id: "16", icon: require("../assets/images/moon.png") },
 ];
 
 const AchievementsPage: React.FC = () => {
@@ -59,13 +66,13 @@ export default AchievementsPage;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 20,
     paddingTop: 80, // More upper padding
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 30, // More space between header and grid
   },
   headerIcon: {
@@ -73,8 +80,8 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 22,
-    fontWeight: 'bold',
-    color: '#4A4A4A',
+    fontWeight: "bold",
+    color: "#4A4A4A",
   },
   grid: {
     paddingBottom: 20,
@@ -82,14 +89,14 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginVertical: 15, // Increased vertical margin for more space between rows
     marginHorizontal: 5,
   },
   icon: {
     width: 60,
     height: 60,
-    resizeMode: 'contain',
+    resizeMode: "contain",
   },
 });
