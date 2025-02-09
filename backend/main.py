@@ -12,13 +12,26 @@ import openai
 from groq import Groq
 import requests
 from dotenv import load_dotenv
-import backend.meal as meal
+import meal as meal
+from database import food_analysis, mongo_client
+from fastapi import APIRouter
+import users as users
+
 
 app = FastAPI()
+router = APIRouter()
+app.include_router(users.router)
+app.include_router(meal.meal_router, prefix="/meals", tags=["meals"])
+app.include_router(router)
 
-app.include_router(meal.router, prefix="", tags=["meals"])
 load_dotenv()
+mongo_uri = os.getenv("MONGO_URI")
+db = MongoClient(mongo_uri, server_api=ServerApi('1'))
 
+load_dotenv()
+food_analysis = db["nutriscan"]["food_analysis"]
+for i in food_analysis.find():
+    print(i)
 # Retrieve API keys from environment variables
 groq_api_key = os.getenv("GROQ_API_KEY")
 
@@ -26,15 +39,6 @@ mongo_uri = os.getenv("MONGO_URI")
 print(mongo_uri)
 
 # Connect to MongoDB
-mongo_client = MongoClient(mongo_uri, server_api=ServerApi('1'))
-try:
-    mongo_client.admin.command('ping')
-    print("Successfully connected to MongoDB!")
-except Exception as e:
-    print(f"MongoDB Connection Error: {e}")
-
-db = mongo_client["nutriscan"]  
-collection = db["food_analysis"]
 
 # Allow Expo app to communicate with backend
 app.add_middleware(
@@ -96,7 +100,7 @@ async def analyze_calories(file: UploadFile = File(...)):
         "image_base64": base64_image,  # Store the image data
         "analysis": response.choices[0].message.content,
     }
-    collection.insert_one(document)
+    food_analysis.insert_one(document)
 
     return {"response": response.choices[0].message.content}
 
@@ -104,9 +108,15 @@ async def analyze_calories(file: UploadFile = File(...)):
 
 # Endpoint to Retrieve Past Analyses
 @app.get("/history")
-async def get_analysis_history(limit: int = 5):
-    history = list(collection.find({}, {"_id": 0}).sort("timestamp", -1).limit(limit))
+async def get_analysis_history(limit: int = 5, user_id: str = None):
+    pipeline = [
+    {"$sort": {"timestamp": -1}},
+    {"$limit": limit},
+    {"$project": {"_id": 0}}  # Exclude _id so there's nothing non-serializable
+    ]
+    history = list(food_analysis.aggregate(pipeline))
     return {"history": history}
+
 
 
 # Get Health Feedback from LLM
@@ -114,7 +124,7 @@ async def get_analysis_history(limit: int = 5):
 async def get_meal_feedback(limit: int = 5):
     try:
         # ✅ Retrieve up to 5 past meals
-        recent_meals = list(collection.find({}, {"_id": 0}).sort("timestamp", -1).limit(limit))
+        recent_meals = list(food_analysis.find({}, {}).sort("timestamp", -1).limit(limit))
 
         # ✅ Format meal data for LLM prompt
         meal_descriptions = "\n".join([f"- {meal['analysis']}" for meal in recent_meals])

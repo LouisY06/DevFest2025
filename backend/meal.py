@@ -5,10 +5,10 @@ from bson import ObjectId
 from typing import List
 from datetime import datetime, time, date
 
-router = APIRouter()
+meal_router = APIRouter(prefix="/meals", tags=["meals"])
 
 # CREATE A NEW MEAL
-@router.post("/", response_model=dict)
+@meal_router.post("/", response_model=dict)
 async def create_meal(user_id: str, meal: MealCreate, file: UploadFile = File(None)):
     """
     Create a new meal for a user.
@@ -61,7 +61,7 @@ async def create_meal(user_id: str, meal: MealCreate, file: UploadFile = File(No
     }
     return response_data
 
-@router.get("/", response_model=List[Meal])
+@meal_router.get("/", response_model=List[Meal])
 async def get_meals(user_id: str, meal_date: date | None = Query(None)):
     """
     Retrieve all meals for a given user.
@@ -74,7 +74,7 @@ async def get_meals(user_id: str, meal_date: date | None = Query(None)):
     meals = await meal_collection.find(query).to_list(100)
     return meals
 
-@router.get("/{meal_id}", response_model=Meal)
+@meal_router.get("/{meal_id}", response_model=Meal)
 async def get_meal(user_id: str, meal_id: str):
     """
     Retrieve a single meal by meal_id for the given user.
@@ -84,7 +84,7 @@ async def get_meal(user_id: str, meal_id: str):
         raise HTTPException(status_code=404, detail="Meal not found")
     return meal
 
-@router.put("/{meal_id}", response_model=Meal)
+@meal_router.put("/{meal_id}", response_model=Meal)
 async def update_meal(user_id: str, meal_id: str, meal: MealCreate):
     """
     Update an existing meal record.
@@ -98,7 +98,7 @@ async def update_meal(user_id: str, meal_id: str, meal: MealCreate):
     updated_meal = await meal_collection.find_one({"_id": ObjectId(meal_id), "user_id": user_id})
     return updated_meal
 
-@router.delete("/{meal_id}")
+@meal_router.delete("/{meal_id}")
 async def delete_meal(user_id: str, meal_id: str):
     """
     Delete a meal record.
