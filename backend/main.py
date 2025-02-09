@@ -15,6 +15,8 @@ import meal as meal
 from database import food_analysis, mongo_client
 from fastapi import APIRouter
 import users as users
+import re
+
 
 
 app = FastAPI()
@@ -95,7 +97,7 @@ async def analyze_calories(file: UploadFile = File(...)):
         model="llama-3.2-11b-vision-preview",
     )
 
-    # ✅ Store result in MongoDB
+    # Store result in MongoDB
     document = {
         "timestamp": datetime.now(timezone.utc),
         "image_name": file.filename,
@@ -103,6 +105,12 @@ async def analyze_calories(file: UploadFile = File(...)):
         "analysis": response.choices[0].message.content,
     }
     food_analysis.insert_one(document)
+    pattern = r'\{.*\}'
+    match = re.search(pattern,response.choices[0].message.content)
+    if match:
+        result = match.group(0)
+    else:
+        result = ""
 
     return {"response": response.choices[0].message.content}
 
@@ -154,7 +162,7 @@ async def get_meal_feedback(limit: int = 5):
         Do NOT output any text ouside the JSON, and ensure the JSON is **valid**  ONLY OUTPUT A JSON.
         """
 
-        # ✅ Send to Groq LLM
+        # Send to Groq LLM
         feedback = await analyze_text(prompt_text)
 
         return {"feedback": feedback}

@@ -1,6 +1,6 @@
-from fastapi import APIRouter, HTTPException, UploadFile, File, Query
+from fastapi import APIRouter, HTTPException, UploadFile, File, Query, Body
 from schemas.meal import Meal, MealCreate
-from database import meal_collection  # Assume this provides a Motor/MongoDB collection
+from database import meal_collection  # Assume this is a Motor/MongoDB collection
 from bson import ObjectId
 from typing import List
 from datetime import datetime, time, date
@@ -9,99 +9,101 @@ meal_router = APIRouter(prefix="/meals", tags=["meals"])
 
 # CREATE A NEW MEAL
 @meal_router.post("/", response_model=dict)
-async def create_meal(user_id: str, meal: MealCreate, file: UploadFile = File(None)):
+async def create_meal(meal: dict):
+    return meal
     """
-    Create a new meal for a user.
-    Optionally, an image file can be uploaded to be processed externally,
-    and the resulting URL included in the meal record.
+    Create a new meal.
+    Optionally, an image file can be uploaded. The resulting URL is part of `meal.image_url`.
     
-    The endpoint returns a JSON in the format:
+    Returns JSON in format:
     {
       "main_food_items": [
-        {
-          "name": "food item name",
-          "alternative": "alternative food item",  # or null if not provided
-          "calories": calorie count
-        }
+        {"name": "...", "alternative": "...", "calories": ...}
       ],
-      "total_calories": total calorie count
+      "total_calories": ...,
+      "username": "...",
+      "user_icon_link": "...",
+      "id": "..."  (the new meal's DB ID)
     }
     """
-    # Convert the Pydantic model (MealCreate) to a dictionary.
-    meal_data = meal.model_dump()
-    meal_data["user_id"] = user_id
 
-    # Convert the 'date' field from datetime.date to datetime.datetime if necessary.
-    if isinstance(meal_data.get("date"), date):
-        meal_data["date"] = datetime.combine(meal_data["date"], time())
+    # Convert Pydantic to dict
 
-    # Optionally process the file here if needed...
-    # For now, we assume the image_url is provided as part of the payload.
+    # Convert date -> datetime if needed
 
-    # Insert the document into the "meals" collection.
-    new_meal = await meal_collection.insert_one(meal_data)
-    created_meal = await meal_collection.find_one({"_id": ObjectId(new_meal.inserted_id)})
-    if not created_meal:
-        raise HTTPException(status_code=400, detail="Meal creation failed")
+    # Optionally process file if needed... or rely on meal.image_url
 
-    # Transform the stored meal data into the expected response format.
-    # Here we assume that each dish has at least a "name" and "calories" field.
-    main_food_items = []
-    for dish in created_meal.get("dishes", []):
-        main_food_items.append({
-            "name": dish.get("name"),
-            # Use the provided "alternative" if present; otherwise, default to null.
-            "alternative": dish.get("alternative", None),
-            "calories": dish.get("calories")
-        })
+    # Insert into Mongo
 
-    response_data = {
-        "main_food_items": main_food_items,
-        "total_calories": created_meal.get("total_calories")
-    }
-    return response_data
 
+# GET ALL MEALS FOR A USER
 @meal_router.get("/", response_model=List[Meal])
-async def get_meals(user_id: str, meal_date: date | None = Query(None)):
+async def get_meals(
+    user_id: str,
+    meal_date: date | None = Query(None),
+):
     """
-    Retrieve all meals for a given user.
-    Optionally filter by a specific date.
+    Retrieve all meals for a given user_id.
+    Optionally filter by date.
     """
     query = {"user_id": user_id}
+
     if meal_date:
-        # Depending on how dates are stored, you might need additional formatting
-        query["date"] = meal_date.isoformat()
-    meals = await meal_collection.find(query).to_list(100)
+        # If you stored 'date' as a datetime in the DB, you'll need to do a range query
+        # Or if you stored it as a string, compare as string
+        # For a simple approach, do:
+        date_str = meal_date.isoformat()
+        query["date"] = date_str
+
+    meals = await meal_collection.find(query).to_list(1000)
+    # We rely on the response_model=List[Meal] to parse it back
+
     return meals
 
-@meal_router.get("/{meal_id}", response_model=Meal)
-async def get_meal(user_id: str, meal_id: str):
-    """
-    Retrieve a single meal by meal_id for the given user.
-    """
-    meal = await meal_collection.find_one({"_id": ObjectId(meal_id), "user_id": user_id})
-    if meal is None:
-        raise HTTPException(status_code=404, detail="Meal not found")
-    return meal
 
+# GET A SINGLE MEAL BY ID
+@meal_router.get("/{meal_id}", response_model=Meal)
+async def get_meal(meal_id: str, user_id: str):
+    """
+    Retrieve a single meal by meal_id + user_id
+    """
+    meal_doc = await meal_collection.find_one({"_id": ObjectId(meal_id), "user_id": user_id})
+    if meal_doc is None:
+        raise HTTPException(status_code=404, detail="Meal not found")
+    return meal_doc
+
+
+# UPDATE A MEAL
 @meal_router.put("/{meal_id}", response_model=Meal)
-async def update_meal(user_id: str, meal_id: str, meal: MealCreate):
+async def update_meal(meal_id: str, user_id: str, meal_update: MealCreate):
     """
-    Update an existing meal record.
+    Update an existing meal. We pass meal_update which also contains user_id, username, etc.
     """
+    update_data = meal_update.model_dump()
+
+    # Convert date -> datetime if needed
+    if isinstance(update_data.get("date"), date):
+        update_data["date"] = datetime.combine(update_data["date"], time())
+
     update_result = await meal_collection.update_one(
         {"_id": ObjectId(meal_id), "user_id": user_id},
-        {"$set": meal.dict()}
+        {"$set": update_data}
     )
     if update_result.modified_count == 0:
         raise HTTPException(status_code=404, detail="Meal not found or not updated")
-    updated_meal = await meal_collection.find_one({"_id": ObjectId(meal_id), "user_id": user_id})
-    return updated_meal
 
+    updated_doc = await meal_collection.find_one({"_id": ObjectId(meal_id), "user_id": user_id})
+    if not updated_doc:
+        raise HTTPException(status_code=404, detail="Meal not found after update")
+
+    return updated_doc
+
+
+# DELETE A MEAL
 @meal_router.delete("/{meal_id}")
-async def delete_meal(user_id: str, meal_id: str):
+async def delete_meal(meal_id: str, user_id: str):
     """
-    Delete a meal record.
+    Delete a meal by meal_id + user_id
     """
     delete_result = await meal_collection.delete_one({"_id": ObjectId(meal_id), "user_id": user_id})
     if delete_result.deleted_count == 0:
