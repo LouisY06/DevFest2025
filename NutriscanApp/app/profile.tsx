@@ -96,7 +96,7 @@ export default function Profile() {
           try {
             parsedMeal = JSON.parse(meal.analysis);
           } catch (error) {
-            console.error("Error parsing meal analysis:", error);
+            // console.error("Error parsing meal analysis:", error);
             return (
               <View key={index} style={styles.resultItem}>
                 <Text style={styles.resultTitle}>Meal</Text>
