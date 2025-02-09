@@ -8,8 +8,11 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router"; // Import Expo Router
 
 export default function Home() {
+  const router = useRouter(); // Initialize router
+
   // Mock feed data
   const feedData = [
     {
@@ -40,8 +43,8 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      {/* 📢 Weekly Challenge Banner */}
-      <TouchableOpacity style={styles.challengeBanner}>
+      {/* 📢 Weekly Challenge Banner - Now Navigates to Challenge Page */}
+      <TouchableOpacity style={styles.challengeBanner} onPress={() => router.push("/challenge")}>
         <Text style={styles.challengeText}>The Challenge of the week is here</Text>
         <Ionicons name="chevron-forward" size={20} color="white" />
       </TouchableOpacity>
