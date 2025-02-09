@@ -11,25 +11,28 @@ from PIL import Image
 import openai
 from groq import Groq
 import requests
+from dotenv import load_dotenv
 
 app = FastAPI()
+load_dotenv()
 
-# ✅ Retrieve API keys from environment variables
+# Retrieve API keys from environment variables
 groq_api_key = os.getenv("GROQ_API_KEY")
 mongo_uri = os.getenv("MONGO_URI")
+print(mongo_uri)
 
-# ✅ Connect to MongoDB
+# Connect to MongoDB
 mongo_client = MongoClient(mongo_uri, server_api=ServerApi('1'))
 try:
     mongo_client.admin.command('ping')
-    print("✅ Successfully connected to MongoDB!")
+    print("Successfully connected to MongoDB!")
 except Exception as e:
-    print(f"🚨 MongoDB Connection Error: {e}")
+    print(f"MongoDB Connection Error: {e}")
 
 db = mongo_client["nutriscan"]  
 collection = db["food_analysis"]  
 
-# ✅ Allow Expo app to communicate with backend
+# Allow Expo app to communicate with backend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -43,11 +46,11 @@ client = openai.OpenAI(
         api_key=os.environ.get("GROQ_API_KEY")
     )
 
-# ✅ Function to Convert Image to Base64
+# Function to Convert Image to Base64
 def encode_image_to_base64(image_bytes):
     return base64.b64encode(image_bytes).decode("utf-8")
 
-# ✅ Function to Send Image to Groq's LLM
+# Function to Send Image to Groq's LLM
 async def analyze_image(image_bytes):
     base64_image = encode_image_to_base64(image_bytes)
 
@@ -68,7 +71,7 @@ async def analyze_image(image_bytes):
     )
     return response.choices[0].message.content
 
-# ✅ Function to Analyze Image for Calories (Alternative LLM Call)
+# Function to Analyze Image for Calories (Alternative LLM Call)
 @app.post("/analyze2")
 async def analyze_calories(file: UploadFile = File(...)):
     groq = Groq()
@@ -103,7 +106,7 @@ async def analyze_calories(file: UploadFile = File(...)):
     )
     return {"response": completion.choices[0].message.content}
 
-# ✅ FastAPI Endpoint to Accept Image Upload and Store Results
+# FastAPI Endpoint to Accept Image Upload and Store Results
 @app.post("/analyze")
 async def analyze_food(file: UploadFile = File(...)):
     try:
@@ -112,10 +115,10 @@ async def analyze_food(file: UploadFile = File(...)):
         image.save(img_byte_arr, format="JPEG")
         img_bytes = img_byte_arr.getvalue()
 
-        # ✅ Call `analyze_image()`
+        # Call `analyze_image()`
         analysis = await analyze_image(img_bytes)
 
-        # ✅ Store result in MongoDB
+        # Store result in MongoDB
         document = {
             "timestamp": datetime.now(timezone.utc),
             "image_name": file.filename,
@@ -127,16 +130,16 @@ async def analyze_food(file: UploadFile = File(...)):
 
     except Exception as e:
         import traceback
-        print("🚨 Backend Error:", traceback.format_exc())
+        print("Backend Error:", traceback.format_exc())
         return {"error": str(e)}
 
-# ✅ Endpoint to Retrieve Past Analyses
+# Endpoint to Retrieve Past Analyses
 @app.get("/history")
 async def get_analysis_history():
     history = list(collection.find({}, {"_id": 0}))  
     return {"history": history}
 
-# ✅ Get Health Feedback from LLM
+# Get Health Feedback from LLM
 @app.get("/feedback")
 async def get_meal_feedback(limit: int = 5):
     try:
@@ -154,17 +157,17 @@ async def get_meal_feedback(limit: int = 5):
         Provide concise, actionable suggestions for improving nutrition.
         """
 
-        # ✅ Send meals to Groq's LLM
+        # Send meals to Groq's LLM
         feedback = await analyze_text(prompt_text)
 
         return {"feedback": feedback}
 
     except Exception as e:
         import traceback
-        print("🚨 Backend Error:", traceback.format_exc())
+        print("Backend Error:", traceback.format_exc())
         return {"error": str(e)}
 
-# ✅ Helper function to send text prompts to LLM
+# Helper function to send text prompts to LLM
 async def analyze_text(prompt_text):
     loop = asyncio.get_running_loop()
     response = await loop.run_in_executor(
@@ -177,7 +180,7 @@ async def analyze_text(prompt_text):
 
     return response.choices[0].message.content
 
-# ✅ Optimal Prompt for Groq LLM
+# Optimal Prompt for Groq LLM
 optimal_prompt = '''You will be analyzing a food image. The image could be a food packaging or a food dish. Please follow these rules strictly:
 
 1. If the alternative food item is significantly different from the original, and consider vegetarian options.

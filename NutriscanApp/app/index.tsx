@@ -1,22 +1,23 @@
-import React, { useState } from "react";
-import { 
-    View, 
-    Text, 
-    Button, 
-    Image, 
-    ActivityIndicator, 
-    Alert, 
-    ScrollView, 
-    StyleSheet 
-} from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import React, { useState } from "react";
+import {
+    ActivityIndicator,
+    Alert,
+    Button,
+    Image,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View
+} from "react-native";
+
 
 export default function FoodScanner() {
     const [image, setImage] = useState<string | null>(null);
     const [analysisResult, setAnalysisResult] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
-    // ✅ Open Camera
+    // Open Camera
     const takePhoto = async () => {
         const { status } = await ImagePicker.requestCameraPermissionsAsync();
         if (status !== "granted") {
@@ -35,7 +36,7 @@ export default function FoodScanner() {
         }
     };
 
-    // ✅ Upload Image for Analysis
+    // Upload Image for Analysis
     const analyzeImage = async () => {
         if (!image) {
             Alert.alert("Error", "Please take a picture first.");
@@ -51,7 +52,7 @@ export default function FoodScanner() {
         } as any);
 
         try {
-            let response = await fetch("http://10.207.5.135:8080/analyze2", {
+            let response = await fetch("http://10.206.57.212:8080/analyze2", {
                 method: "POST",
                 headers: { "Content-Type": "multipart/form-data" },
                 body: formData,
@@ -67,7 +68,7 @@ export default function FoodScanner() {
         setLoading(false);
     };
 
-    // ✅ Parse & Display Analysis Result
+    // Parse & Display Analysis Result
     const renderAnalysisResult = () => {
         if (!analysisResult) return <Text style={styles.responseText}>No analysis available.</Text>;
 
@@ -106,7 +107,7 @@ export default function FoodScanner() {
     );
 }
 
-// ✅ Styles for Better UI
+// Styles for Better UI
 const styles = StyleSheet.create({
     container: {
         flex: 1,
