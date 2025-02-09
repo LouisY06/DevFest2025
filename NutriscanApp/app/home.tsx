@@ -1,13 +1,14 @@
+import { Ionicons } from "@expo/vector-icons";
+import "expo-router/entry";
 import React from "react";
 import {
-  StyleSheet,
-  Text,
-  View,
   Image,
   ScrollView,
+  StyleSheet,
+  Text,
   TouchableOpacity,
+  View,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 
 export default function Home() {
   // Mock feed data

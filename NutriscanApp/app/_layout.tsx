@@ -1,8 +1,10 @@
-import React from "react";
-import { StyleSheet, View, TouchableOpacity, Alert } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { Slot, useRouter } from "expo-router";
+// Layout.tsx
+
+import * as vectorIcons from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import { Slot, useRouter } from "expo-router";
+import React from "react";
+import { Alert, StyleSheet, TouchableOpacity, View } from "react-native";
 
 export default function Layout() {
   const router = useRouter();
@@ -22,8 +24,15 @@ export default function Layout() {
     });
 
     if (!result.canceled) {
-      console.log("Captured Image:", result.assets[0].uri);
-      Alert.alert("Photo Taken", "Image saved successfully!");
+      const photoUri = result.assets[0].uri;
+      console.log("Captured Image:", photoUri);
+    
+      // ✅ Navigate to /post_photo with the photoUri as a param
+      console.log("router push");
+      router.push({
+        pathname: "/post_photo",
+        params: { photoUri },
+      });
     }
   };
 
@@ -36,22 +45,22 @@ export default function Layout() {
       <View style={styles.bottomNavContainer}>
         <View style={styles.bottomNav}>
           <TouchableOpacity onPress={() => router.push("/home")}>
-            <Ionicons name="home-outline" size={28} color="#777" />
+            <vectorIcons.Ionicons name="home-outline" size={28} color="#777" />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => router.push("/profile")}>
-            <Ionicons name="person-outline" size={28} color="#777" />
+            <vectorIcons.Ionicons name="person-outline" size={28} color="#777" />
           </TouchableOpacity>
 
           {/* Floating Camera Button - Opens iOS Camera */}
           <TouchableOpacity style={styles.cameraButton} onPress={openCamera}>
-            <Ionicons name="camera" size={30} color="white" />
+            <vectorIcons.Ionicons name="camera" size={30} color="white" />
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => router.push("/streaks")}>
-            <Ionicons name="flame-outline" size={28} color="#777" />
+            <vectorIcons.Ionicons name="flame-outline" size={28} color="#777" />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => router.push("/Settings")}>
-            <Ionicons name="settings-outline" size={28} color="#777" />
+            <vectorIcons.Ionicons name="settings-outline" size={28} color="#777" />
           </TouchableOpacity>
         </View>
       </View>
