@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F5F7FA",
-    paddingTop: 50, // ✅ Moves entire screen content down slightly
+    paddingTop: 40, // ✅ Moves entire screen slightly up
   },
   challengeBanner: {
     flexDirection: "row",
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 15,
     marginHorizontal: 15,
-    marginTop: 70, // ✅ Moves banner further down to avoid notch overlap
+    marginTop: 35, // ✅ Moves banner slightly up to fine-tune placement
     alignItems: "center",
     justifyContent: "space-between",
   },
