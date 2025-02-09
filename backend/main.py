@@ -11,7 +11,6 @@ from PIL import Image
 import openai
 from groq import Groq
 import requests
-from dotenv import load_dotenv
 import meal as meal
 from database import food_analysis, mongo_client
 from fastapi import APIRouter
@@ -24,24 +23,19 @@ app.include_router(users.router)
 app.include_router(meal.meal_router, prefix="/meals", tags=["meals"])
 app.include_router(router)
 
-load_dotenv()
 mongo_uri = os.getenv("MONGO_URI")
 db = MongoClient(mongo_uri, server_api=ServerApi('1'))
 
-load_dotenv()
 food_analysis = db["nutriscan"]["food_analysis"]
-for i in food_analysis.find():
-    print(i)
+
 # Retrieve API keys from environment variables
 groq_api_key = os.getenv("GROQ_API_KEY")
 mongo_uri = os.getenv("MONGO_URI")
-print(mongo_uri)
 
 # Connect to MongoDB
 mongo_client = MongoClient(mongo_uri, server_api=ServerApi('1'))
 try:
     mongo_client.admin.command('ping')
-    print("Successfully connected to MongoDB!")
 except Exception as e:
     print(f"MongoDB Connection Error: {e}")
 
@@ -162,7 +156,6 @@ async def get_meal_feedback(limit: int = 5):
 
         # ✅ Send to Groq LLM
         feedback = await analyze_text(prompt_text)
-        print(feedback)
 
         return {"feedback": feedback}
 
