@@ -47,29 +47,9 @@ client = openai.OpenAI(
 def encode_image_to_base64(image_bytes):
     return base64.b64encode(image_bytes).decode("utf-8")
 
-# ✅ Function to Send Image to Groq's LLM
-async def analyze_image(image_bytes):
-    base64_image = encode_image_to_base64(image_bytes)
-
-    response = client.chat.completions.create(
-        messages=[
-            {
-                "role": "system",
-                "content": "Analyze the food image and estimate calories & ingredients."
-            },
-            {
-                "role": "user",
-                "content": [
-                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_bytes}"}}
-                ]
-            }
-        ],
-        model="deepseek-r1-distill-llama-70b"
-    )
-    return response.choices[0].message.content
 
 # ✅ Function to Analyze Image for Calories (Alternative LLM Call)
-@app.post("/analyze2")
+@app.post("/analyze")
 async def analyze_calories(file: UploadFile = File(...)):
     groq = Groq()
 
@@ -84,7 +64,7 @@ async def analyze_calories(file: UploadFile = File(...)):
     img_resized.save(buffer, format="JPEG")
     base64_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
 
-    completion = groq.chat.completions.create(
+    response = groq.chat.completions.create(
         messages=[
             {
                 "role": "user",
@@ -101,34 +81,17 @@ async def analyze_calories(file: UploadFile = File(...)):
         stop=None,
         model="llama-3.2-11b-vision-preview",
     )
-    return {"response": completion.choices[0].message.content}
 
-# ✅ FastAPI Endpoint to Accept Image Upload and Store Results
-@app.post("/analyze")
-async def analyze_food(file: UploadFile = File(...)):
-    try:
-        image = Image.open(io.BytesIO(await file.read()))
-        img_byte_arr = io.BytesIO()
-        image.save(img_byte_arr, format="JPEG")
-        img_bytes = img_byte_arr.getvalue()
+    # ✅ Store result in MongoDB
+    document = {
+        "timestamp": datetime.now(timezone.utc),
+        "image_name": file.filename,
+        "analysis": response.choices[0].message.content,
+    }
+    collection.insert_one(document)
+    
+    return {"response": response.choices[0].message.content}
 
-        # ✅ Call `analyze_image()`
-        analysis = await analyze_image(img_bytes)
-
-        # ✅ Store result in MongoDB
-        document = {
-            "timestamp": datetime.now(timezone.utc),
-            "image_name": file.filename,
-            "analysis": analysis,
-        }
-        collection.insert_one(document)
-
-        return {"response": analysis}
-
-    except Exception as e:
-        import traceback
-        print("🚨 Backend Error:", traceback.format_exc())
-        return {"error": str(e)}
 
 # ✅ Endpoint to Retrieve Past Analyses
 @app.get("/history")
@@ -151,7 +114,7 @@ async def get_meal_feedback(limit: int = 5):
         {meal_descriptions}
 
         Analyze the health of these most recent meals and give feedback to the user about possible nutritional improvements for future meals.
-        Provide concise, actionable suggestions for improving nutrition.
+        Provide concise, actionable suggestions for improving nutrition in bullet points.
         """
 
         # ✅ Send meals to Groq's LLM
