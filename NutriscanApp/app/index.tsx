@@ -177,9 +177,11 @@ export default function FoodScanner() {
 
                 {/* ✅ Formatted Health Feedback */}
                 <Text style={styles.sectionTitle}>📝 Health Feedback:</Text>
-                <Text style={styles.responseText}>{feedback || "No feedback yet."}</Text>
+                <Text style={styles.responseText}>{feedback || "No feedback yet."}</Text> 
+                {/* TODO: Use renderFeedbackResult() instead */}
 
                 {/* ✅ Formatted Meal History */}
+                {/* TODO: Use renderHistoryResult() instead */}
                 <Text style={styles.sectionTitle}>📜 Meal History:</Text>
                 {history.length > 0 ? (
                     history.map((meal, index) => (
