@@ -1,19 +1,19 @@
-// AchievementsPage.tsx
-
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React from "react";
-import { FlatList, Image, StyleSheet, Text, View } from "react-native";
+import { FlatList, Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 
 type Achievement = {
   id: string;
-  icon: any; // ImageSourcePropType can be used instead
+  icon: any;
+  route?: string; // Optional route for navigation
 };
 
 // Sample achievements array (updated with all available images)
 const achievements: Achievement[] = [
-  { id: "1", icon: require("../assets/images/lettuce.png") },
+  { id: "1", icon: require("../assets/images/lettuce.png"), route: "/achievementzoom" }, // ✅ Lettuce navigates to achievementzoom
   { id: "2", icon: require("../assets/images/donut.png") },
-  { id: "3", icon: require("../assets/images/lettuce.png") },
+  { id: "3", icon: require("../assets/images/meatnveg.png"), route: "/achievementzoom" }, // ✅ Another lettuce instance
   { id: "4", icon: require("../assets/images/berries.png") },
   { id: "5", icon: require("../assets/images/burger.png") },
   { id: "6", icon: require("../assets/images/water.png") },
@@ -30,22 +30,26 @@ const achievements: Achievement[] = [
 ];
 
 const AchievementsPage: React.FC = () => {
+  const router = useRouter();
+
   const renderAchievement = ({ item }: { item: Achievement }) => (
-    <View style={styles.iconContainer}>
+    <TouchableOpacity
+      style={styles.iconContainer}
+      onPress={() => {
+        if (item.route) {
+          router.push("/achievementzoom"); // ✅ Navigate if route exists
+        }
+      }}
+    >
       <Image source={item.icon} style={styles.icon} />
-    </View>
+    </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Ionicons
-          name="trophy"
-          size={28}
-          color="#4A4A4A"
-          style={styles.headerIcon}
-        />
+        <Ionicons name="trophy" size={28} color="#4A4A4A" style={styles.headerIcon} />
         <Text style={styles.headerTitle}>My Achievements</Text>
       </View>
 
@@ -68,12 +72,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     padding: 20,
-    paddingTop: 80, // More upper padding
+    paddingTop: 80,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 30, // More space between header and grid
+    marginBottom: 30,
   },
   headerIcon: {
     marginRight: 10,
@@ -85,13 +89,13 @@ const styles = StyleSheet.create({
   },
   grid: {
     paddingBottom: 20,
-    marginTop: 20, // Extra margin at the top of the grid
+    marginTop: 20,
   },
   iconContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginVertical: 15, // Increased vertical margin for more space between rows
+    marginVertical: 15,
     marginHorizontal: 5,
   },
   icon: {

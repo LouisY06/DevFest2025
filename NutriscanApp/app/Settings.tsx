@@ -1,5 +1,3 @@
-// Settings.tsx
-
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -11,18 +9,6 @@ import {
   View,
 } from "react-native";
 
-type Allergy = {
-  id: string;
-  name: string;
-};
-
-// Sample current allergies (the ones already selected)
-const currentAllergies: Allergy[] = [
-  { id: "1", name: "Peanuts" },
-  { id: "2", name: "Shellfish" },
-  { id: "3", name: "Gluten" },
-];
-
 const Settings: React.FC = () => {
   const router = useRouter(); // ✅ Initialize router
 
@@ -30,49 +16,72 @@ const Settings: React.FC = () => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        {/* ✅ Fixed Back Button - Now Navigates to the Previous Screen */}
+        {/* ✅ Back Button */}
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Text style={styles.backButtonText}>←</Text>
+          <Ionicons name="arrow-back" size={24} color="#4A4A4A" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Settings</Text>
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
-        {/* Allergies Section */}
-        <Text style={styles.sectionTitle}>My Allergies</Text>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.allergiesContainer}
-        >
-          {currentAllergies.map((allergy) => (
-            <View key={allergy.id} style={styles.currentAllergyBox}>
-              <Ionicons name="warning" size={32} color="#FFA500" />
-              <Text style={styles.allergyText}>{allergy.name}</Text>
-            </View>
-          ))}
-        </ScrollView>
+      {/* Eating Habits Section */}
+      <Text style={styles.sectionMainTitle}>Eating Habits</Text>
 
-        {/* "Add More Allergies" - One big box */}
-        <TouchableOpacity style={styles.addAllergyBox}>
-          <Text style={styles.addAllergyText}>Add More Allergies</Text>
+      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        {/* ✅ Edit Allergies Button */}
+        <TouchableOpacity
+          style={styles.infoBox}
+          onPress={() => {
+            console.log("Navigating to Allergies Page");
+            router.push("./allergies");
+          }}
+        >
+          <View>
+            <Text style={styles.infoTitle}>Edit Allergies</Text>
+            <Text style={styles.infoSubtitle}>Lactose Intolerant</Text>
+          </View>
+          <Text style={styles.infoValue}>7</Text>
         </TouchableOpacity>
 
-        {/* Other settings options */}
-        <View style={styles.settingItem}>
-          <Text style={styles.settingTitle}>Change Profile Picture</Text>
-        </View>
-        <View style={styles.settingItem}>
-          <Text style={styles.settingTitle}>Account Settings</Text>
-        </View>
-        <View style={styles.settingItem}>
-          <Text style={styles.settingTitle}>Notifications</Text>
-        </View>
-        <View style={styles.settingItem}>
-          <Text style={styles.settingTitle}>Privacy</Text>
-        </View>
-        <View style={styles.settingItem}>
-          <Text style={styles.settingTitle}>About</Text>
+        {/* ✅ My Eating Habits Button */}
+        <TouchableOpacity
+          style={styles.infoBox}
+          onPress={() => {
+            console.log("Navigating to Eating Habits Page");
+            router.push("./eatinghabits");
+          }}
+        >
+          <View>
+            <Text style={styles.infoTitle}>My Eating Habits</Text>
+            <Text style={styles.infoSubtitle}>Omnivore</Text>
+          </View>
+          <Text style={styles.infoValue}>86%</Text>
+        </TouchableOpacity>
+
+        {/* Goals Section */}
+        <Text style={styles.sectionTitle}>Goals</Text>
+        <View style={styles.goalsContainer}>
+          <View style={styles.goalBox}>
+            <Ionicons name="barbell" size={40} color="#3A8850" />
+            <Text style={styles.goalTitle}>More Buff</Text>
+            <Text style={styles.goalSubtitle}>Protein Eater</Text>
+          </View>
+
+          <View style={styles.goalBox}>
+            <Ionicons name="leaf" size={40} color="#3A8850" />
+            <Text style={styles.goalTitle}>Vitamin A</Text>
+            <Text style={styles.goalSubtitle}>Dairy, eggs</Text>
+          </View>
+
+          <View style={styles.goalBox}>
+            <Ionicons name="flame" size={40} color="#3A8850" />
+            <Text style={styles.goalTitle}>Gain Energy</Text>
+            <Text style={styles.goalSubtitle}>Carbohydrates</Text>
+          </View>
+
+          {/* Add Goal Button */}
+          <TouchableOpacity style={styles.addGoalButton}>
+            <Ionicons name="add" size={32} color="white" />
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>
@@ -84,82 +93,104 @@ export default Settings;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#F5F7FA",
   },
   header: {
     height: 60,
-    paddingHorizontal: 10,
-    justifyContent: "center",
-    position: "relative",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    justifyContent: "space-between",
   },
   backButton: {
-    position: "absolute",
-    left: 10,
-    top: 15,
     padding: 5,
   },
-  backButtonText: {
-    fontSize: 24,
-    color: "#007AFF",
-  },
   headerTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
     textAlign: "center",
-    fontSize: 20,
-    fontWeight: "bold",
-    lineHeight: 60,
+    flex: 1,
+    color: "#333",
   },
-  content: {
-    padding: 20,
-  },
-  sectionTitle: {
-    fontSize: 20,
+  sectionMainTitle: {
+    fontSize: 22,
     fontWeight: "bold",
+    textAlign: "center",
     marginVertical: 15,
     color: "#222",
   },
-  // Allergies Section
-  allergiesContainer: {
-    alignItems: "center",
-    paddingVertical: 10,
+  content: {
+    paddingHorizontal: 20,
   },
-  currentAllergyBox: {
-    width: 140,
-    height: 140,
-    marginRight: 15,
-    backgroundColor: "#e0e0e0",
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginVertical: 15,
+    color: "#444",
   },
-  allergyText: {
-    marginTop: 5,
+  infoBox: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 12,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
+  },
+  infoTitle: {
     fontSize: 16,
+    fontWeight: "bold",
     color: "#333",
   },
-  // "Add More Allergies" box (one big box)
-  addAllergyBox: {
-    width: "95%",
-    height: 120,
-    marginVertical: 20,
-    backgroundColor: "#d0d0d0",
-    borderRadius: 10,
+  infoSubtitle: {
+    fontSize: 14,
+    color: "#888",
+  },
+  infoValue: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#3A8850",
+  },
+  goalsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
+  goalBox: {
+    backgroundColor: "#fff",
+    width: "48%",
+    padding: 15,
+    borderRadius: 12,
+    alignItems: "center",
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
+  },
+  goalTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginTop: 10,
+    color: "#222",
+  },
+  goalSubtitle: {
+    fontSize: 14,
+    color: "#888",
+  },
+  addGoalButton: {
+    backgroundColor: "#4A9780",
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
-  },
-  addAllergyText: {
-    fontSize: 18,
-    color: "#555",
-    fontWeight: "bold",
-  },
-  // Settings options
-  settingItem: {
-    padding: 15,
-    marginVertical: 10,
-    backgroundColor: "#f2f2f2",
-    borderRadius: 10,
-  },
-  settingTitle: {
-    fontSize: 18,
+    marginTop: 10,
+    elevation: 3,
   },
 });
